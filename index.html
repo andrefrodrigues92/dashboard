@@ -1125,7 +1125,7 @@ function makeLineChart(canvasId, labels, datasets, yLabel = 'kWh') {
   // renderMobileLegend(canvasId, datasets);
 }
 
-function makeBarChart(canvasId, labels, datasets) {
+function makeBarChart(canvasId, labels, datasets, yLabel = 'kWh') {
   destroyChart(canvasId);
   const ctx = document.getElementById(canvasId).getContext('2d');
   charts[canvasId] = new Chart(ctx, {
@@ -1139,7 +1139,7 @@ function makeBarChart(canvasId, labels, datasets) {
         tooltip: {
           enabled: true,
           mode: 'index', intersect: false,
-          callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + ' kWh' }
+          callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + ' ' + yLabel }
         },
         zoom: {
           zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' },
@@ -1149,7 +1149,7 @@ function makeBarChart(canvasId, labels, datasets) {
       scales: {
         ...chartDefaults.scales,
         x: { ...chartDefaults.scales.x, stacked: true },
-        y: { ...chartDefaults.scales.y, stacked: true, title: { display: true, text: 'kWh', color: '#64748b', font: { size: 11 } } }
+        y: { ...chartDefaults.scales.y, stacked: true, title: { display: true, text: yLabel, color: '#64748b', font: { size: 11 } } }
       }
     }
   });
@@ -1157,7 +1157,7 @@ function makeBarChart(canvasId, labels, datasets) {
   // renderMobileLegend(canvasId, datasets);
 }
 
-function makeDoughnutChart(canvasId, labels, data, colors) {
+function makeDoughnutChart(canvasId, labels, data, colors, unitLabel = 'kWh') {
   destroyChart(canvasId);
   const ctx = document.getElementById(canvasId)?.getContext('2d');
   if (!ctx) return;
@@ -1185,7 +1185,7 @@ function makeDoughnutChart(canvasId, labels, data, colors) {
         },
         tooltip: {
           callbacks: {
-            label: ctx => ' ' + ctx.label + ': ' + ctx.parsed.toFixed(2) + ' kWh'
+            label: ctx => ' ' + ctx.label + ': ' + ctx.parsed.toFixed(2) + ' ' + unitLabel
           }
         }
       }
@@ -1476,7 +1476,8 @@ function renderSensorInsights(filteredBySensor, activeSensors) {
     'chartSensorDonut',
     sensorAvgs.map(d => d.sensor),
     sensorAvgs.map(d => parseFloat(d.avg.toFixed(2))),
-    sensorAvgs.map(d => SENSOR_COLORS[d.sensor].line)
+    sensorAvgs.map(d => SENSOR_COLORS[d.sensor].line),
+    '°C'
   );
 
   // Top 3 hottest rooms
@@ -1530,7 +1531,8 @@ function renderSensorInsights(filteredBySensor, activeSensors) {
     'chartSensorHumidityDonut',
     sensorHumidityAvgs.map(d => d.sensor),
     sensorHumidityAvgs.map(d => parseFloat(d.avg.toFixed(2))),
-    sensorHumidityAvgs.map(d => SENSOR_COLORS[d.sensor].line)
+    sensorHumidityAvgs.map(d => SENSOR_COLORS[d.sensor].line),
+    '%'
   );
 
   const humSorted = [...sensorHumidityAvgs].sort((a, b) => b.avg - a.avg);
