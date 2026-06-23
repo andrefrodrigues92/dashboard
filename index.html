@@ -184,7 +184,6 @@
     .kpi-card:nth-child(4n + 2) { background: var(--kpi-teal); }
     .kpi-card:nth-child(4n + 3) { background: var(--kpi-orange); }
     .kpi-card:nth-child(4n + 4) { background: var(--kpi-blue); }
-    .kpi-icon { display: none; }
     .kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.75); font-weight: 500; margin-bottom: 8px; }
     .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1; color: #fff; }
     .kpi-unit { font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.8); margin-left: 4px; }
@@ -373,6 +372,53 @@
     }
     .view-toggle button.active { background: var(--accent); color: #0f172a; }
 
+    /* Room status grid */
+    .room-status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .room-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .room-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .room-card-name {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .room-card-temp { font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1; }
+    .room-card-unit { font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.7); }
+    .room-card-humidity { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; }
+    .comfort-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      font-size: 0.7rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .comfort-good { background: rgba(61,149,133,0.2); color: #5ecfba; border: 1px solid rgba(61,149,133,0.3); }
+    .comfort-ok   { background: rgba(245,158,11,0.18); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .comfort-bad  { background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .mold-badge { display: flex; align-items: center; gap: 4px; margin-top: 5px; font-size: 0.68rem; color: #fbbf24; }
+
     footer {
       text-align: center;
       color: var(--text-muted);
@@ -428,6 +474,222 @@
       tbody td    { padding: 7px 8px; }
       .bar-bg     { display: none; }
       .bar-cell   { justify-content: flex-end; }
+      .room-status-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* General page */
+    .gen-section-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .gen-alerts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .gen-alert-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+    }
+    .gen-alert-item.alert-bad {
+      border-color: rgba(239,68,68,0.35);
+      background: rgba(239,68,68,0.07);
+      color: #f87171;
+    }
+    .gen-alert-item.alert-warn {
+      border-color: rgba(245,158,11,0.35);
+      background: rgba(245,158,11,0.07);
+      color: #f59e0b;
+    }
+    .gen-alert-none {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 8px 0;
+    }
+    .freshness-info {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .live-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    /* Room trend rows */
+    .trend-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(51,65,85,0.4);
+      font-size: 0.82rem;
+    }
+    .trend-row:last-child { border-bottom: none; }
+    .trend-room { font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .trend-val  { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text-muted); }
+    .trend-up   { color: #f87171; }
+    .trend-down { color: #38bdf8; }
+    .trend-flat { color: var(--text-muted); }
+    /* Horizontal bar chart canvas height override */
+    .hbar-container { position: relative; height: 280px; }
+    /* Live page summary bar */
+    .live-summary-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .live-summary-kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      flex: 1 1 140px;
+      min-width: 120px;
+    }
+    .live-summary-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .live-summary-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+    .live-summary-unit { font-size: 0.9rem; font-weight: 400; color: rgba(255,255,255,0.7); }
+    /* Two-column layout */
+    .live-columns {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+    .live-col-header {
+      margin-bottom: 12px;
+    }
+    .live-room-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    /* Device stack — full-width cards stacked vertically */
+    .live-device-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .device-live-card-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .device-live-card-row:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .device-live-card-row::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 3px;
+    }
+    .device-row-badge { flex-shrink: 0; }
+    .device-row-info { min-width: 0; }
+    .device-row-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+    .device-row-meta { font-size: 0.75rem; color: var(--text-muted); }
+    .device-row-energy {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .device-row-kwh {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .device-row-cost { font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 2px; }
+    .device-badge-active  { background: rgba(61,149,133,0.2);  color: #5ecfba; border: 1px solid rgba(61,149,133,0.3); }
+    .device-badge-standby { background: rgba(245,158,11,0.18); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .device-badge-off     { background: rgba(100,116,139,0.18);color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+    /* Room card priority border */
+    .room-card-priority-bad  { border-color: rgba(239,68,68,0.5); }
+    .room-card-priority-warn { border-color: rgba(245,158,11,0.4); }
+    .room-card-ts {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    @media (max-width: 900px) {
+      .live-columns { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .live-room-grid { grid-template-columns: repeat(2, 1fr); }
+      /* Summary bar: 2-column grid so 5 items = 2+2+1, looks intentional */
+      .live-summary-bar { display: grid; grid-template-columns: 1fr 1fr; }
+      /* Device rows: 2-col on mobile — badge left (spanning both rows), name+energy right */
+      .device-live-card-row { grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: 8px 10px; }
+      .device-row-badge { grid-row: 1 / 3; align-self: center; }
+      .device-row-energy { grid-column: 2; grid-row: 2; text-align: left; }
+      .device-row-kwh { font-size: 1rem; }
+    }
+    /* Nav: scrollable on narrow screens so tabs never overflow */
+    @media (max-width: 700px) {
+      .header-right { width: 100%; flex-direction: column; align-items: flex-start; gap: 6px; }
+      /* 2×2 grid nav — each tab gets equal space, no overflow */
+      .page-nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        border-radius: 14px;
+        padding: 3px;
+        gap: 3px;
+      }
+      .page-link {
+        text-align: center;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        padding: 8px 4px;
+        white-space: normal;
+        line-height: 1.2;
+      }
+      #dataFreshness { display: none; } /* redundant with liveLastSeen on small screens */
     }
   </style>
 </head>
@@ -436,10 +698,14 @@
   <h1><span class="icon" id="pageIcon">⚡</span> <span id="pageTitle">SmartThings Energy Dashboard</span></h1>
   <div class="header-right">
     <nav class="page-nav" aria-label="Dashboard pages">
+      <a class="page-link" id="linkLive" href="#live">🟢 Live</a>
+      <a class="page-link" id="linkGeneral" href="#overview">Overview</a>
       <a class="page-link" id="linkElectronics" href="#electronics">Electronic Devices</a>
       <a class="page-link" id="linkSensors" href="#sensors">Sensor Devices</a>
     </nav>
     <div class="source-badge"><span></span>Google Sheets · live</div>
+    <div id="dataFreshness" class="freshness-info"></div>
+    <button class="btn btn-ghost btn-sm" id="btnRefresh" onclick="refreshData()" title="Refresh data">🔄 Refresh</button>
   </div>
 </header>
 
@@ -493,25 +759,21 @@
   <!-- KPI Cards -->
   <div class="kpi-grid">
     <div class="kpi-card">
-      <div class="kpi-icon">⚡</div>
       <div class="kpi-label">Total Consumption</div>
       <div class="kpi-value" id="kpiTotal">—<span class="kpi-unit">kWh</span></div>
       <div class="kpi-sub" id="kpiTotalSub">in selected period</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">📅</div>
       <div class="kpi-label">Avg Daily Consumption</div>
       <div class="kpi-value" id="kpiAvgDay">—<span class="kpi-unit">kWh</span></div>
       <div class="kpi-sub" id="kpiAvgDaySub">per day (all devices combined)</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">📈</div>
       <div class="kpi-label">Peak Day</div>
       <div class="kpi-value" id="kpiPeak">—<span class="kpi-unit">kWh</span></div>
       <div class="kpi-sub" id="kpiPeakDate">—</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">💶</div>
       <div class="kpi-label">Cost</div>
       <div class="kpi-value" id="kpiCost">—<span class="kpi-unit">€</span></div>
       <div class="kpi-sub" id="kpiCostRate">—</div>
@@ -575,12 +837,26 @@
     <div class="chart-info-bar" id="infoBar_chartOverview">Tap a data point to see its value</div>
   </div>
 
+  <!-- Weekly Energy Pattern chart -->
+  <div class="chart-card full" style="margin-bottom:20px;" id="weeklyPatternCard">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Weekly Energy Pattern</div>
+        <div class="chart-subtitle" id="weeklyPatternSubtitle">Average kWh by day of week in selected period</div>
+      </div>
+      <span class="chart-badge badge-orange">Avg per day-of-week</span>
+    </div>
+    <div class="chart-container" style="height:240px;">
+      <canvas id="chartWeeklyPattern"></canvas>
+    </div>
+  </div>
+
   <!-- Per-device charts (generated dynamically from DEVICE_SHEETS) -->
   <!--
   <div class="charts-grid" id="deviceChartsGrid"></div>
   -->
 
-  <!-- Monthly bar chart
+  <!-- Monthly bar chart -->
   <div class="chart-card full" style="margin-bottom:20px;" id="monthlyBarCard">
     <div class="chart-header">
       <div>
@@ -612,7 +888,6 @@
     </div>
     <div class="chart-info-bar" id="infoBar_chartMonthly">Tap a data point to see its value</div>
   </div>
-  -->
 
   <!-- Simple Summary Table -->
   <div class="table-card" id="deviceSummaryCard">
@@ -634,88 +909,59 @@
   <section id="sensorsPage">
   <div class="kpi-grid" id="sensorKpiGrid">
     <div class="kpi-card">
-      <div class="kpi-icon">🌡️</div>
       <div class="kpi-label">Latest Temperature</div>
       <div class="kpi-value" id="kpiSensorLatestTemp">—<span class="kpi-unit">°C</span></div>
       <div class="kpi-sub" id="kpiSensorLatestTempSub">average of latest sensor readings</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">📊</div>
       <div class="kpi-label">Average Temperature</div>
       <div class="kpi-value" id="kpiSensorAvgTemp">—<span class="kpi-unit">°C</span></div>
       <div class="kpi-sub" id="kpiSensorAvgTempSub">in selected period</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">🔺</div>
       <div class="kpi-label">Peak Temperature</div>
       <div class="kpi-value" id="kpiSensorPeakTemp">—<span class="kpi-unit">°C</span></div>
       <div class="kpi-sub" id="kpiSensorPeakTempSub">—</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">💧</div>
       <div class="kpi-label">Latest Humidity</div>
       <div class="kpi-value" id="kpiSensorLatestHumidity">—<span class="kpi-unit">%</span></div>
       <div class="kpi-sub" id="kpiSensorLatestHumiditySub">average of latest sensor readings</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">📉</div>
       <div class="kpi-label">Average Humidity</div>
       <div class="kpi-value" id="kpiSensorAvgHumidity">—<span class="kpi-unit">%</span></div>
       <div class="kpi-sub" id="kpiSensorAvgHumiditySub">in selected period</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-icon">⬆️</div>
       <div class="kpi-label">Peak Humidity</div>
       <div class="kpi-value" id="kpiSensorPeakHumidity">—<span class="kpi-unit">%</span></div>
       <div class="kpi-sub" id="kpiSensorPeakHumiditySub">—</div>
     </div>
   </div>
-
-  <!-- Sensor Insights Row: Donut + Top 3 -->
+  <!-- Sensor Insights Row: Avg Temp + Avg Humidity -->
   <div class="insights-grid" id="sensorInsightsGrid">
     <div class="chart-card" id="sensorDonutCard">
       <div class="chart-header">
         <div>
-          <div class="chart-title">Avg Temperature by Room</div>
-          <div class="chart-subtitle">Relative temperature distribution across sensors</div>
-        </div>
-      </div>
-      <div class="chart-container" style="height:240px;">
-        <canvas id="chartSensorDonut"></canvas>
-      </div>
-    </div>
-    <div class="chart-card" id="sensorTop3Card">
-      <div class="chart-header">
-        <div>
-          <div class="chart-title">Hottest Rooms</div>
+          <div class="chart-title">Avg Temperature per Room</div>
           <div class="chart-subtitle">Ranked by average temperature in period</div>
         </div>
       </div>
-      <div id="sensorTop3List"><p class="top3-empty">No data available</p></div>
+      <div class="hbar-container">
+        <canvas id="chartSensorDonut"></canvas>
+      </div>
     </div>
-  </div>
-
-  <!-- Sensor Humidity Insights Row -->
-  <div class="insights-grid" id="sensorHumidityInsightsGrid">
     <div class="chart-card" id="sensorHumidityDonutCard">
       <div class="chart-header">
         <div>
-          <div class="chart-title">Avg Humidity by Room</div>
-          <div class="chart-subtitle">Relative humidity distribution across sensors</div>
-        </div>
-      </div>
-      <div class="chart-container" style="height:240px;">
-        <canvas id="chartSensorHumidityDonut"></canvas>
-      </div>
-    </div>
-    <div class="chart-card" id="sensorHumidityTop3Card">
-      <div class="chart-header">
-        <div>
-          <div class="chart-title">Most Humid Rooms</div>
+          <div class="chart-title">Avg Humidity per Room</div>
           <div class="chart-subtitle">Ranked by average humidity in period</div>
         </div>
       </div>
-      <div id="sensorHumidityTop3List"><p class="top3-empty">No data available</p></div>
+      <div class="hbar-container">
+        <canvas id="chartSensorHumidityDonut"></canvas>
+      </div>
     </div>
   </div>
 
@@ -799,10 +1045,97 @@
     </table>
   </div>
   </section>
+
+  <section id="generalPage">
+    <!-- Combined KPI Cards -->
+    <div class="kpi-grid" id="generalKpiGrid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Energy</div>
+        <div class="kpi-value" id="kpiGenEnergy">—<span class="kpi-unit">kWh</span></div>
+        <div class="kpi-sub" id="kpiGenEnergySub">in selected period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Estimated Cost</div>
+        <div class="kpi-value" id="kpiGenCost">—<span class="kpi-unit">€</span></div>
+        <div class="kpi-sub" id="kpiGenCostSub">in selected period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Home Temperature</div>
+        <div class="kpi-value" id="kpiGenTemp">—<span class="kpi-unit">°C</span></div>
+        <div class="kpi-sub">avg of latest room readings</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Home Humidity</div>
+        <div class="kpi-value" id="kpiGenHumidity">—<span class="kpi-unit">%</span></div>
+        <div class="kpi-sub">avg of latest room readings</div>
+      </div>
+    </div>
+
+    <!-- Alerts — commented out: comfort & mold-risk info is already shown as badges on each room card below
+    <div id="generalAlertsSection" style="margin-bottom:28px;">
+      <div class="gen-section-title">🔔 Alerts</div>
+      <div id="generalAlerts" class="gen-alerts"></div>
+    </div>
+    -->
+
+    <!-- Quick Stats: top device + room highlights -->
+    <div class="insights-grid" id="generalQuickStats">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Energy by Device</div>
+            <div class="chart-subtitle" id="generalTopDeviceSub">Total kWh per device in selected period</div>
+          </div>
+        </div>
+        <div id="generalTopDevice"><p class="top3-empty">No data available</p></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Room Trends</div>
+            <div class="chart-subtitle">Temperature &amp; humidity vs. 24 h ago</div>
+          </div>
+        </div>
+        <div id="generalRoomHighlights"><p class="top3-empty">No data available</p></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Biggest Temperature Swing</div>
+            <div class="chart-subtitle">Rooms with highest temp range in selected period</div>
+          </div>
+        </div>
+        <div id="generalTempSwing"><p class="top3-empty">No data available</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="livePage">
+
+    <!-- Summary bar -->
+    <div id="liveSummaryBar" class="live-summary-bar"></div>
+
+    <!-- Two-column layout: rooms left, devices right -->
+    <div class="live-columns">
+      <div class="live-col-rooms">
+        <div class="live-col-header">
+          <div class="gen-section-title" style="margin-bottom:4px;">🏠 Room Status</div>
+          <div id="liveLastSeen" class="freshness-info">Last reading: —</div>
+        </div>
+        <div id="liveRoomGrid" class="live-room-grid"></div>
+      </div>
+      <div class="live-col-devices">
+        <div class="live-col-header">
+          <div class="gen-section-title" style="margin-bottom:4px;">⚡ Device Status</div>
+        </div>
+        <div id="liveDeviceGrid" class="live-device-stack"></div>
+      </div>
+    </div>
+
+  </section>
 </main>
 
 <footer>
-  SmartThings Energy Dashboard &nbsp;·&nbsp; Data source: Google Sheets &nbsp;·&nbsp;
+  <span id="footerText">SmartThings Home Dashboard</span> &nbsp;·&nbsp; Data source: Google Sheets &nbsp;·&nbsp;
   <span>Sheet ID: 1ipXHg6F…</span>
 </footer>
 
@@ -984,97 +1317,6 @@ function monthLabel(ym) {
 
 const isMobile = () => window.innerWidth <= 640;
 
-function updateInfoBar(canvasId, chart, event) {
-  const bar = document.getElementById('infoBar_' + canvasId);
-  if (!bar) return;
-  const points = chart.getElementsAtEventForMode(event, 'index', { intersect: false }, true);
-  if (!points.length) return;
-  const idx = points[0].index;
-  const label = chart.data.labels[idx];
-  bar.classList.add('active');
-  const visibleRows = chart.data.datasets
-    .map((ds, datasetIndex) => ({ ds, datasetIndex }))
-    .filter(item => chart.isDatasetVisible(item.datasetIndex))
-    .map(item => {
-      const val = item.ds.data[idx];
-      if (val == null) return null;
-      const color = Array.isArray(item.ds.backgroundColor)
-        ? item.ds.backgroundColor[idx]
-        : (item.ds.borderColor || item.ds.backgroundColor || '#94a3b8');
-      return {
-        label: item.ds.label || '',
-        value: Number(val),
-        color,
-      };
-    })
-    .filter(Boolean);
-
-  const items = visibleRows
-    .map(row => `<span class="info-item"><span class="info-dot" style="background:${row.color}"></span>${row.label ? row.label + ': ' : ''}${row.value.toFixed(2)}</span>`)
-    .join('');
-
-  const baseRows = visibleRows.filter(row => row.label.toLowerCase() !== 'total');
-  const totalValue = baseRows.reduce((sum, row) => sum + row.value, 0);
-  const totalItem = baseRows.length > 1
-    ? `<span class="info-item"><span class="info-dot" style="background:#f1f5f9"></span>Total: ${totalValue.toFixed(2)}</span>`
-    : '';
-  bar.innerHTML = `<span class="info-label">${label}</span>${items}${totalItem}`;
-}
-
-function datasetLegendColor(ds) {
-  if (Array.isArray(ds.borderColor) && ds.borderColor.length) return ds.borderColor[0];
-  if (Array.isArray(ds.backgroundColor) && ds.backgroundColor.length) return ds.backgroundColor[0];
-  return ds.borderColor || ds.backgroundColor || '#94a3b8';
-}
-
-function renderMobileLegend(canvasId, datasets) {
-  const legendId = 'mobileLegend_' + canvasId;
-  let legend = document.getElementById(legendId);
-  const chart = charts[canvasId];
-  const items = (datasets || []).map((ds, idx) => ({ ds, idx })).filter(item => item.ds && item.ds.label);
-
-  if (!isMobile() || items.length <= 1) {
-    if (legend) {
-      legend.style.display = 'none';
-      legend.innerHTML = '';
-    }
-    return;
-  }
-
-  if (!legend) {
-    const canvas = document.getElementById(canvasId);
-    const card = canvas?.closest('.chart-card');
-    if (!card) return;
-    legend = document.createElement('div');
-    legend.id = legendId;
-    legend.className = 'chart-mobile-legend';
-    const infoBar = document.getElementById('infoBar_' + canvasId);
-    if (infoBar && infoBar.parentElement === card) card.insertBefore(legend, infoBar);
-    else card.appendChild(legend);
-  }
-
-  legend.innerHTML = items.map(item => {
-    const visible = chart ? chart.isDatasetVisible(item.idx) : true;
-    const inactiveClass = visible ? '' : ' inactive';
-    return '<button type="button" class="legend-chip' + inactiveClass + '" data-dataset-index="' + item.idx + '"><span class="legend-dot" style="background:' + datasetLegendColor(item.ds) + '"></span>' + item.ds.label + '</button>';
-  }
-  ).join('');
-
-  legend.querySelectorAll('[data-dataset-index]').forEach(el => {
-    el.addEventListener('click', () => {
-      const idx = Number(el.getAttribute('data-dataset-index'));
-      const activeChart = charts[canvasId];
-      if (!activeChart || Number.isNaN(idx)) return;
-      const nextVisible = !activeChart.isDatasetVisible(idx);
-      activeChart.setDatasetVisibility(idx, nextVisible);
-      activeChart.update();
-      el.classList.toggle('inactive', !nextVisible);
-    });
-  });
-
-  legend.style.display = 'flex';
-}
-
 const chartDefaults = {
   responsive: true,
   maintainAspectRatio: false,
@@ -1155,6 +1397,46 @@ function makeBarChart(canvasId, labels, datasets, yLabel = 'kWh') {
   });
   // Mobile-specific legend rendering is disabled to keep PC/mobile subtitle behavior consistent.
   // renderMobileLegend(canvasId, datasets);
+}
+
+function makeHorizontalBarChart(canvasId, labels, data, colors, unit = '') {
+  destroyChart(canvasId);
+  const ctx = document.getElementById(canvasId)?.getContext('2d');
+  if (!ctx) return;
+  charts[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderWidth: 0,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => ' ' + ctx.parsed.x.toFixed(1) + (unit ? ' ' + unit : '') }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(51,65,85,0.5)' },
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          title: { display: !!unit, text: unit, color: '#64748b', font: { size: 11 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: '#e8edf5', font: { size: 12 } }
+        }
+      }
+    }
+  });
 }
 
 function makeDoughnutChart(canvasId, labels, data, colors, unitLabel = 'kWh') {
@@ -1248,11 +1530,13 @@ let currentMetric = 'energy';
 let state = { dateFrom: null, dateTo: null, device: 'all', sensor: 'all' };
 let currentPage = 'electronics';
 let periodPicker = null;
-const pagePeriodSelection = { electronics: null, sensors: null };
+const pagePeriodSelection = { electronics: null, sensors: null, overview: null, live: null };
 
 function getCurrentPage() {
   const h = (window.location.hash || '').toLowerCase();
   if (h === '#sensors') return 'sensors';
+  if (h === '#overview') return 'overview';
+  if (h === '#live') return 'live';
   return 'electronics';
 }
 
@@ -1262,25 +1546,58 @@ function setVisible(el, visible) {
 }
 
 function applyPageLayout() {
-  const isSensorsPage = currentPage === 'sensors';
+  const isSensorsPage     = currentPage === 'sensors';
+  const isGeneralPage     = currentPage === 'overview';
+  const isElectronicsPage = currentPage === 'electronics';
+  const isLivePage        = currentPage === 'live';
 
-  setVisible(document.getElementById('electronicsPage'), !isSensorsPage);
-  setVisible(document.getElementById('sensorsPage'), isSensorsPage);
+  setVisible(document.getElementById('electronicsPage'), isElectronicsPage);
+  setVisible(document.getElementById('sensorsPage'),     isSensorsPage);
+  setVisible(document.getElementById('generalPage'),     isGeneralPage);
+  setVisible(document.getElementById('livePage'),        isLivePage);
 
-  setVisible(document.getElementById('selDevice')?.closest('.filter-group'), !isSensorsPage);
+  // Hide all filters on the live page (it always shows latest data)
+  setVisible(document.querySelector('.filters'), !isLivePage);
+
+  setVisible(document.getElementById('selDevice')?.closest('.filter-group'), isElectronicsPage);
   setVisible(document.getElementById('selSensor')?.closest('.filter-group'), isSensorsPage);
-  setVisible(document.getElementById('sensorResetGroup'), isSensorsPage);
-  setVisible(document.querySelector('.filter-actions'), !isSensorsPage);
+  setVisible(document.getElementById('sensorResetGroup'), isSensorsPage || isGeneralPage);
+  setVisible(document.querySelector('.filter-actions'), isElectronicsPage);
+  // Period picker only relevant for pages with time-filtered data
+  setVisible(document.getElementById('selPeriod')?.closest('.filter-group'), isElectronicsPage || isSensorsPage || isGeneralPage);
 
   const linkElec = document.getElementById('linkElectronics');
   const linkSens = document.getElementById('linkSensors');
-  if (linkElec) linkElec.classList.toggle('active', !isSensorsPage);
+  const linkGen  = document.getElementById('linkGeneral');
+  const linkLive = document.getElementById('linkLive');
+  if (linkElec) linkElec.classList.toggle('active', isElectronicsPage);
   if (linkSens) linkSens.classList.toggle('active', isSensorsPage);
+  if (linkGen)  linkGen.classList.toggle('active',  isGeneralPage);
+  if (linkLive) linkLive.classList.toggle('active', isLivePage);
 
   const pageTitle = document.getElementById('pageTitle');
-  const pageIcon = document.getElementById('pageIcon');
-  if (pageTitle) pageTitle.textContent = isSensorsPage ? 'SmartThings Sensor Dashboard' : 'SmartThings Energy Dashboard';
-  if (pageIcon) pageIcon.textContent = isSensorsPage ? '🌡️' : '⚡';
+  const pageIcon  = document.getElementById('pageIcon');
+  const footerText = document.getElementById('footerText');
+  let title = 'SmartThings Home Dashboard';
+  if (isSensorsPage) {
+    title = 'SmartThings Sensor Dashboard';
+    if (pageTitle) pageTitle.textContent = title;
+    if (pageIcon)  pageIcon.textContent  = '🌡️';
+  } else if (isGeneralPage) {
+    title = 'SmartThings Home Overview';
+    if (pageTitle) pageTitle.textContent = title;
+    if (pageIcon)  pageIcon.textContent  = '🏠';
+  } else if (isLivePage) {
+    title = 'SmartThings Live Status';
+    if (pageTitle) pageTitle.textContent = title;
+    if (pageIcon)  pageIcon.textContent  = '🟢';
+  } else {
+    title = 'SmartThings Energy Dashboard';
+    if (pageTitle) pageTitle.textContent = title;
+    if (pageIcon)  pageIcon.textContent  = '⚡';
+  }
+  document.title = title;
+  if (footerText) footerText.textContent = title;
 }
 
 // ==========================================================
@@ -1413,16 +1730,28 @@ function render(data) {
     return;
   }
 
+  if (currentPage === 'overview') {
+    renderGeneralPage();
+    return;
+  }
+
+  if (currentPage === 'live') {
+    renderLivePage();
+    return;
+  }
+
   // Map "none" to an empty selection so charts/KPIs render safely.
   const activeDevices = device === 'all' ? DEVICE_SHEETS : (device === 'none' ? [] : [device]);
   const hideDeviceSections = device === 'none';
+  const isEnergy = currentMetric === 'energy';
 
   const overviewCard = document.getElementById('energyOverviewCard');
   const deviceSummaryCard = document.getElementById('deviceSummaryCard');
   const monthlyBarCard = document.getElementById('monthlyBarCard');
   if (overviewCard) overviewCard.style.display = hideDeviceSections ? 'none' : '';
-  if (deviceSummaryCard) deviceSummaryCard.style.display = hideDeviceSections ? 'none' : '';
-  if (monthlyBarCard) monthlyBarCard.style.display = hideDeviceSections ? 'none' : '';
+  // Monthly bar and summary table only make sense for energy (kWh), not instantaneous power (W)
+  if (deviceSummaryCard) deviceSummaryCard.style.display = (hideDeviceSections || !isEnergy) ? 'none' : '';
+  if (monthlyBarCard) monthlyBarCard.style.display = (hideDeviceSections || !isEnergy) ? 'none' : '';
 
   renderDeviceInsights(filtered, activeDevices);
 
@@ -1432,130 +1761,69 @@ function render(data) {
   } else {
     destroyChart('chartOverview');
   }
-  const metricLabel = currentMetric === 'energy' ? 'kWh' : 'W';
+  const metricLabel = isEnergy ? 'kWh' : 'W';
   document.getElementById('overviewSubtitle').textContent =
     (device === 'all' ? 'All devices' : (device === 'none' ? 'No device selected' : device)) + ' · ' + metricLabel + ' per day';
-  // document.getElementById('deviceChartsGrid').style.display = device === 'all' ? '' : 'none';
-  // if (device === 'all') renderDeviceCharts(filtered, activeDevices, currentMetric);
-  // Monthly Consumption by Device chart is intentionally disabled.
-  // if (!hideDeviceSections) {
-  //   renderMonthlyBar(filtered, activeDevices);
-  // } else {
-  //   destroyChart('chartMonthly');
-  // }
-  if (!hideDeviceSections) renderTable(filtered, activeDevices);
+  if (!hideDeviceSections) {
+    renderWeeklyPattern(filtered, activeDevices, currentMetric);
+    if (isEnergy) {
+      renderMonthlyBar(filtered, activeDevices);
+      renderTable(filtered, activeDevices);
+    } else {
+      destroyChart('chartMonthly');
+    }
+  } else {
+    destroyChart('chartMonthly');
+    destroyChart('chartWeeklyPattern');
+  }
 }
 
 function renderSensorInsights(filteredBySensor, activeSensors) {
   const insightsGrid = document.getElementById('sensorInsightsGrid');
-
   // Compute avg temperature per sensor
   const sensorAvgs = activeSensors.map(sensor => {
     const temps = (filteredBySensor[sensor] || [])
       .map(r => r.temperature)
       .filter(v => typeof v === 'number' && !isNaN(v));
     const avg = temps.length ? temps.reduce((s, v) => s + v, 0) / temps.length : null;
-    const avgHumidity = (() => {
-      const hums = (filteredBySensor[sensor] || [])
-        .map(r => r.humidity)
-        .filter(v => typeof v === 'number' && !isNaN(v));
-      return hums.length ? hums.reduce((s, v) => s + v, 0) / hums.length : null;
-    })();
-    return { sensor, avg, avgHumidity };
+    return { sensor, avg };
   }).filter(d => d.avg !== null);
 
-  if (sensorAvgs.length === 0) {
-    if (insightsGrid) insightsGrid.style.display = 'none';
-    destroyChart('chartSensorDonut');
-    return;
-  }
-  if (insightsGrid) insightsGrid.style.display = '';
-
-  // Donut: avg temp proportions
-  makeDoughnutChart(
-    'chartSensorDonut',
-    sensorAvgs.map(d => d.sensor),
-    sensorAvgs.map(d => parseFloat(d.avg.toFixed(2))),
-    sensorAvgs.map(d => SENSOR_COLORS[d.sensor].line),
-    '°C'
-  );
-
-  // Top 3 hottest rooms
-  const sorted = [...sensorAvgs].sort((a, b) => b.avg - a.avg);
-  const top3 = sorted.slice(0, 3);
-  const maxAvg = top3[0]?.avg || 1;
-  const medals = ['🥇', '🥈', '🥉'];
-  const container = document.getElementById('sensorTop3List');
-  if (!container) return;
-
-  container.innerHTML = top3.map((item, i) => {
-    const pct = Math.round((item.avg / maxAvg) * 100);
-    const color = SENSOR_COLORS[item.sensor].line;
-    const humStr = item.avgHumidity !== null ? ` · ${item.avgHumidity.toFixed(1)}% humidity` : '';
-    return `<div class="top3-item">
-      <div class="top3-header">
-        <span class="top3-medal">${medals[i]}</span>
-        <span class="top3-name">${item.sensor}</span>
-        <span class="top3-value">${item.avg.toFixed(1)}°C${humStr}</span>
-      </div>
-      <div class="top3-bar-bg">
-        <div class="top3-bar-fill" style="width:${pct}%;background:${color}"></div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // --- Humidity insights ---
-  const humidityInsightsGrid = document.getElementById('sensorHumidityInsightsGrid');
   const sensorHumidityAvgs = activeSensors.map(sensor => {
     const hums = (filteredBySensor[sensor] || [])
       .map(r => r.humidity)
       .filter(v => typeof v === 'number' && !isNaN(v));
     const avg = hums.length ? hums.reduce((s, v) => s + v, 0) / hums.length : null;
-    const avgTemp = (() => {
-      const temps = (filteredBySensor[sensor] || [])
-        .map(r => r.temperature)
-        .filter(v => typeof v === 'number' && !isNaN(v));
-      return temps.length ? temps.reduce((s, v) => s + v, 0) / temps.length : null;
-    })();
-    return { sensor, avg, avgTemp };
+    return { sensor, avg };
   }).filter(d => d.avg !== null);
 
-  if (sensorHumidityAvgs.length === 0) {
-    if (humidityInsightsGrid) humidityInsightsGrid.style.display = 'none';
+  if (sensorAvgs.length === 0 && sensorHumidityAvgs.length === 0) {
+    if (insightsGrid) insightsGrid.style.display = 'none';
+    destroyChart('chartSensorDonut');
     destroyChart('chartSensorHumidityDonut');
     return;
   }
-  if (humidityInsightsGrid) humidityInsightsGrid.style.display = '';
+  if (insightsGrid) insightsGrid.style.display = '';
 
-  makeDoughnutChart(
-    'chartSensorHumidityDonut',
-    sensorHumidityAvgs.map(d => d.sensor),
-    sensorHumidityAvgs.map(d => parseFloat(d.avg.toFixed(2))),
-    sensorHumidityAvgs.map(d => SENSOR_COLORS[d.sensor].line),
-    '%'
+  // Horizontal bar: avg temp per room (sorted descending)
+  const sortedForBar = [...sensorAvgs].sort((a, b) => b.avg - a.avg);
+  makeHorizontalBarChart(
+    'chartSensorDonut',
+    sortedForBar.map(d => d.sensor),
+    sortedForBar.map(d => parseFloat(d.avg.toFixed(1))),
+    sortedForBar.map(d => SENSOR_COLORS[d.sensor].line),
+    '°C'
   );
 
-  const humSorted = [...sensorHumidityAvgs].sort((a, b) => b.avg - a.avg);
-  const humTop3 = humSorted.slice(0, 3);
-  const maxHumAvg = humTop3[0]?.avg || 1;
-  const humContainer = document.getElementById('sensorHumidityTop3List');
-  if (!humContainer) return;
-
-  humContainer.innerHTML = humTop3.map((item, i) => {
-    const pct = Math.round((item.avg / maxHumAvg) * 100);
-    const color = SENSOR_COLORS[item.sensor].line;
-    const tempStr = item.avgTemp !== null ? ` · ${item.avgTemp.toFixed(1)}°C` : '';
-    return `<div class="top3-item">
-      <div class="top3-header">
-        <span class="top3-medal">${medals[i]}</span>
-        <span class="top3-name">${item.sensor}</span>
-        <span class="top3-value">${item.avg.toFixed(1)}%${tempStr}</span>
-      </div>
-      <div class="top3-bar-bg">
-        <div class="top3-bar-fill" style="width:${pct}%;background:${color}"></div>
-      </div>
-    </div>`;
-  }).join('');
+  // Horizontal bar: avg humidity per room (sorted descending)
+  const humSortedForBar = [...sensorHumidityAvgs].sort((a, b) => b.avg - a.avg);
+  makeHorizontalBarChart(
+    'chartSensorHumidityDonut',
+    humSortedForBar.map(d => d.sensor),
+    humSortedForBar.map(d => parseFloat(d.avg.toFixed(1))),
+    humSortedForBar.map(d => SENSOR_COLORS[d.sensor].line),
+    '%'
+  );
 }
 
 function renderSensorCharts(dateFrom, dateTo, selectedSensor) {
@@ -1796,11 +2064,15 @@ function renderKPIs(filtered, activeDevices) {
 
   document.getElementById('kpiTotal').innerHTML    = fmt(total) + '<span class="kpi-unit">kWh</span>';
   document.getElementById('kpiAvgDay').innerHTML   = fmt(avgDay) + '<span class="kpi-unit">kWh</span>';
-  document.getElementById('kpiAvgDaySub').textContent = activeDevices.length === 1 ? 'per day · ' + activeDevices[0] : 'per day (all devices combined)';
+  document.getElementById('kpiAvgDaySub').textContent = (activeDevices.length === 1 ? 'per day · ' + activeDevices[0] : 'per day (all devices combined)') + ' · ' + days + ' days with data';
   document.getElementById('kpiPeak').innerHTML     = fmt(peakVal) + '<span class="kpi-unit">kWh</span>';
   document.getElementById('kpiCost').innerHTML     = '<span class="kpi-unit" style="margin-left:0;margin-right:3px;">€</span>' + totalCost.toFixed(2);
   document.getElementById('kpiCostRate').textContent = 'from sheet Cost (€)';
-  document.getElementById('kpiPeakDate').textContent = peakDate || '—';
+  // Format peak date as readable: "Mon 22 Jun 2025"
+  const peakDateFormatted = peakDate
+    ? new Date(peakDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+    : '—';
+  document.getElementById('kpiPeakDate').textContent = peakDateFormatted;
 
   if (dates.length > 0) {
     document.getElementById('kpiDateRange') && (document.getElementById('kpiDateRange').textContent = dates[0] + ' → ' + dates[dates.length - 1]);
@@ -1863,35 +2135,6 @@ function renderOverview(filtered, activeDevices, metric) {
   charts['chartOverview'].update();
 }
 
-function renderDeviceCharts(filtered, activeDevices, metric) {
-  const yLabel = metric === 'energy' ? 'kWh' : 'W';
-  for (const dev of DEVICE_SHEETS) {
-    const cid  = 'chart_' + dev.replace(/\W+/g, '_');
-    const card = document.querySelector(`#deviceChartsGrid [data-device="${CSS.escape(dev)}"]`);
-    if (!activeDevices.includes(dev)) {
-      if (card) card.style.display = 'none';
-      destroyChart(cid);
-      continue;
-    }
-    if (card) card.style.display = '';
-    const rows = filtered[dev] || [];
-    const labels = rows.map(r => r.date);
-    const values = rows.map(r => r[metric] || 0);
-    const col = DEVICE_COLORS[dev];
-    makeLineChart(cid, labels, [{
-      label: dev,
-      data: values,
-      borderColor: col.line,
-      backgroundColor: col.fill,
-      fill: true,
-      tension: 0.3,
-      borderWidth: 2,
-      pointRadius: labels.length > 60 ? 0 : 3,
-      pointHoverRadius: 5,
-    }], yLabel);
-  }
-}
-
 function renderMonthlyBar(filtered, activeDevices) {
   const allMonths = getAllMonths(filtered);
   const labels = allMonths.map(monthLabel);
@@ -1916,7 +2159,8 @@ function renderTable(filtered, activeDevices) {
   const thead = document.getElementById('tableHead');
   thead.innerHTML = '<th>Month</th>' +
     activeDevices.map(d => `<th>${d} (kWh)</th>`).join('') +
-    '<th style="color:var(--accent)">Total (kWh)</th>';
+    '<th style="color:var(--accent)">Total (kWh)</th>' +
+    '<th style="color:var(--accent4)">Cost (€)</th>';
 
   const tbody = document.getElementById('summaryTable');
   tbody.innerHTML = '';
@@ -1931,11 +2175,13 @@ function renderTable(filtered, activeDevices) {
   for (const ym of allMonths) {
     const tr = document.createElement('tr');
     let html = '<td><strong>' + monthLabel(ym) + '</strong></td>';
-    let rowTotal = 0;
+    let rowTotal = 0, rowCost = 0;
     for (const dev of activeDevices) {
       const byMonth = groupByMonth(filtered[dev] || [], 'energy');
+      const byCost  = groupByMonth(filtered[dev] || [], 'cost');
       const val = byMonth[ym] || 0;
       rowTotal += val;
+      rowCost  += byCost[ym] || 0;
       const pct = Math.min(100, (val / maxByDev[dev]) * 100);
       const col = DEVICE_COLORS[dev].line;
       html += '<td><div class="bar-cell">'
@@ -1944,6 +2190,7 @@ function renderTable(filtered, activeDevices) {
             + '</div></td>';
     }
     html += '<td style="color:var(--accent);font-variant-numeric:tabular-nums">' + rowTotal.toFixed(2) + '</td>';
+    html += '<td style="color:var(--accent4);font-variant-numeric:tabular-nums">' + rowCost.toFixed(2) + '</td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);
   }
@@ -1952,13 +2199,16 @@ function renderTable(filtered, activeDevices) {
   const tr = document.createElement('tr');
   tr.className = 'total-row';
   let html = '<td style="text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);font-size:0.75rem">Total</td>';
-  let grandTotal = 0;
+  let grandTotal = 0, grandCost = 0;
   for (const dev of activeDevices) {
     const total = (filtered[dev] || []).reduce((s, r) => s + (r.energy || 0), 0);
+    const cost  = (filtered[dev] || []).reduce((s, r) => s + (r.cost   || 0), 0);
     grandTotal += total;
+    grandCost  += cost;
     html += '<td style="font-variant-numeric:tabular-nums">' + total.toFixed(2) + '</td>';
   }
   html += '<td style="color:var(--accent);font-size:1rem;font-variant-numeric:tabular-nums">' + grandTotal.toFixed(2) + '</td>';
+  html += '<td style="color:var(--accent4);font-size:1rem;font-variant-numeric:tabular-nums">' + grandCost.toFixed(2) + '</td>';
   tr.innerHTML = html;
   tbody.appendChild(tr);
 }
@@ -2065,10 +2315,479 @@ window.addEventListener('hashchange', () => {
 });
 
 // ==========================================================
+// ROOM STATUS GRID — comfort + mold indicators
+// ==========================================================
+function getComfortStatus(temp, humidity) {
+  if (temp == null || humidity == null) return { label: 'No data', cls: 'comfort-ok', emoji: '❓' };
+  const tempIdeal = temp >= 20 && temp <= 24;
+  const humIdeal  = humidity >= 40 && humidity <= 60;
+  if (tempIdeal && humIdeal) return { label: 'Comfortable', cls: 'comfort-good', emoji: '✅' };
+  const tempAcc = temp >= 18 && temp <= 27;
+  const humAcc  = humidity >= 35 && humidity <= 65;
+  if (tempAcc && humAcc) return { label: 'Acceptable', cls: 'comfort-ok', emoji: '🟡' };
+  return { label: 'Uncomfortable', cls: 'comfort-bad', emoji: '❌' };
+}
+
+function getMoldRisk(temp, humidity) {
+  if (humidity == null) return null;
+  if (humidity > 65 && (temp == null || temp > 15)) return { label: 'High mould risk', emoji: '⚠️' };
+  if (humidity > 55) return { label: 'Elevated humidity', emoji: '💧' };
+  return null;
+}
+
+// ==========================================================
+// WEEKLY ENERGY PATTERN
+// ==========================================================
+function renderWeeklyPattern(filtered, activeDevices, metric) {
+  const card = document.getElementById('weeklyPatternCard');
+  if (!card) return;
+  if (!activeDevices.length) { card.style.display = 'none'; destroyChart('chartWeeklyPattern'); return; }
+  card.style.display = '';
+
+  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const totalsByDate = {};
+  for (const dev of activeDevices) {
+    for (const r of (filtered[dev] || [])) {
+      if (!r.date) continue;
+      totalsByDate[r.date] = (totalsByDate[r.date] || 0) + (r[metric] || 0);
+    }
+  }
+
+  const dates = Object.keys(totalsByDate);
+  if (!dates.length) {
+    card.style.display = 'none';
+    destroyChart('chartWeeklyPattern');
+    return;
+  }
+
+  const dayTotals = Array(7).fill(0);
+  const dayCounts = Array(7).fill(0);
+  for (const date of dates) {
+    const jsDay = new Date(date + 'T12:00:00').getDay();
+    const idx = jsDay === 0 ? 6 : jsDay - 1;
+    dayTotals[idx] += totalsByDate[date];
+    dayCounts[idx]++;
+  }
+
+  const data = dayTotals.map((total, i) => dayCounts[i] ? parseFloat((total / dayCounts[i]).toFixed(3)) : 0);
+  const yLabel = metric === 'energy' ? 'kWh' : 'W';
+  const nonZero = data.filter(v => v > 0);
+  const avgVal = nonZero.length ? nonZero.reduce((s, v) => s + v, 0) / nonZero.length : 0;
+
+  destroyChart('chartWeeklyPattern');
+  const ctx = document.getElementById('chartWeeklyPattern')?.getContext('2d');
+  if (!ctx) return;
+
+  charts['chartWeeklyPattern'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dayNames,
+      datasets: [{
+        label: `Avg ${yLabel}`,
+        data,
+        backgroundColor: data.map(v => v > avgVal * 1.15 ? 'rgba(217,95,30,0.75)' : 'rgba(56,189,248,0.65)'),
+        borderColor: data.map(v => v > avgVal * 1.15 ? '#d95f1e' : '#38bdf8'),
+        borderWidth: 1,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => `Avg: ${c.parsed.y.toFixed(3)} ${yLabel}` } }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(51,65,85,0.5)' }, ticks: { color: '#94a3b8', font: { size: 12 } } },
+        y: {
+          grid: { color: 'rgba(51,65,85,0.5)' },
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          title: { display: true, text: `Avg ${yLabel}`, color: '#64748b', font: { size: 11 } },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  const subtitle = document.getElementById('weeklyPatternSubtitle');
+  if (subtitle) subtitle.textContent = (activeDevices.length === 1 ? activeDevices[0] : 'All devices') + ` · average ${yLabel} by day of week`;
+}
+
+// ==========================================================
+// GENERAL PAGE
+// ==========================================================
+function renderGeneralPage() {
+  if (!appData || !sensorData) return;
+
+  const { dateFrom, dateTo } = readFilters();
+  const filtered = filterData(appData, dateFrom, dateTo);
+
+  // -- Energy KPIs (period-filtered) --
+  let totalEnergy = 0, totalCost = 0;
+  for (const dev of DEVICE_SHEETS) {
+    for (const r of (filtered[dev] || [])) {
+      totalEnergy += r.energy || 0;
+      totalCost   += r.cost   || 0;
+    }
+  }
+
+  const kpiEnergy = document.getElementById('kpiGenEnergy');
+  const kpiCost   = document.getElementById('kpiGenCost');
+  const kpiEnSub  = document.getElementById('kpiGenEnergySub');
+  const kpiCoSub  = document.getElementById('kpiGenCostSub');
+  if (kpiEnergy) kpiEnergy.innerHTML = totalEnergy.toFixed(2) + '<span class="kpi-unit">kWh</span>';
+  if (kpiCost)   kpiCost.innerHTML   = totalCost.toFixed(2)   + '<span class="kpi-unit">€</span>';
+  if (kpiEnSub)  kpiEnSub.textContent = dateFrom + ' → ' + dateTo;
+  if (kpiCoSub)  kpiCoSub.textContent = dateFrom + ' → ' + dateTo;
+
+  // -- Sensor KPIs (latest readings, no period filter) --
+  const latestTemps = [], latestHumidities = [];
+  for (const sensor of SENSOR_SHEETS) {
+    const rows = (sensorData[sensor] || []).filter(r => r.timestamp);
+    const latest = rows[rows.length - 1] || null;
+    if (latest?.temperature != null) latestTemps.push({ sensor, value: latest.temperature });
+    if (latest?.humidity    != null) latestHumidities.push({ sensor, value: latest.humidity });
+  }
+  const avgTemp     = latestTemps.length      ? latestTemps.reduce((s,v)=>s+v.value,0)      / latestTemps.length      : null;
+  const avgHumidity = latestHumidities.length ? latestHumidities.reduce((s,v)=>s+v.value,0) / latestHumidities.length : null;
+
+  const kpiTemp = document.getElementById('kpiGenTemp');
+  const kpiHum  = document.getElementById('kpiGenHumidity');
+  if (kpiTemp) kpiTemp.innerHTML = (avgTemp     != null ? avgTemp.toFixed(1)     : '—') + '<span class="kpi-unit">°C</span>';
+  if (kpiHum)  kpiHum.innerHTML  = (avgHumidity != null ? avgHumidity.toFixed(1) : '—') + '<span class="kpi-unit">%</span>';
+
+  // -- Alerts — commented out: comfort & mold-risk is already shown as badges on each room card
+  // const alertsEl = document.getElementById('generalAlerts');
+  // if (alertsEl) {
+  //   const alerts = [];
+  //   for (const sensor of SENSOR_SHEETS) {
+  //     const rows   = (sensorData[sensor] || []).filter(r => r.timestamp);
+  //     const latest = rows[rows.length - 1] || null;
+  //     if (!latest) continue;
+  //     const temp     = latest.temperature ?? null;
+  //     const humidity = latest.humidity    ?? null;
+  //     const comfort  = getComfortStatus(temp, humidity);
+  //     const mold     = getMoldRisk(temp, humidity);
+  //     const detail   = temp != null
+  //       ? ` (${temp.toFixed(1)}°C${humidity != null ? ', ' + humidity.toFixed(1) + '%' : ''})`
+  //       : '';
+  //     if (comfort.cls === 'comfort-bad') {
+  //       alerts.push({ type: 'bad',  msg: `${comfort.emoji} ${sensor}: ${comfort.label}${detail}` });
+  //     } else if (mold) {
+  //       alerts.push({ type: 'warn', msg: `${mold.emoji} ${sensor}: ${mold.label}${detail}` });
+  //     }
+  //   }
+  //   alertsEl.innerHTML = alerts.length
+  //     ? alerts.map(a => `<div class="gen-alert-item alert-${a.type}">${a.msg}</div>`).join('')
+  //     : '<div class="gen-alert-none">✅ No alerts — all rooms are comfortable</div>';
+  // }
+
+  // -- Device energy ranking --
+  const topDeviceEl = document.getElementById('generalTopDevice');
+  if (topDeviceEl) {
+    const devTotals = DEVICE_SHEETS
+      .map(dev => ({ dev, total: (filtered[dev] || []).reduce((s,r) => s + (r.energy||0), 0) }))
+      .filter(d => d.total > 0)
+      .sort((a,b) => b.total - a.total);
+    const maxTotal = devTotals[0]?.total || 1;
+    const medals   = ['🥇','🥈','🥉'];
+    topDeviceEl.innerHTML = devTotals.length
+      ? devTotals.map((d, i) => {
+          const pct   = Math.round((d.total / maxTotal) * 100);
+          const color = DEVICE_COLORS[d.dev].line;
+          return `<div class="top3-item">
+            <div class="top3-header">
+              <span class="top3-medal">${medals[i] || ''}</span>
+              <span class="top3-name">${d.dev}</span>
+              <span class="top3-value">${d.total.toFixed(2)} kWh</span>
+            </div>
+            <div class="top3-bar-bg"><div class="top3-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          </div>`;
+        }).join('')
+      : '<p class="top3-empty">No data available</p>';
+  }
+
+  // -- Room Trends: current vs. 24 h ago --
+  const roomHighlightsEl = document.getElementById('generalRoomHighlights');
+  if (roomHighlightsEl) {
+    const trendArrow = (delta, unit) => {
+      if (delta === null) return '';
+      const sign = delta > 0 ? '+' : '';
+      if (Math.abs(delta) < 0.3) return `<span class="trend-flat">→</span>`;
+      return delta > 0
+        ? `<span class="trend-up">▲ ${sign}${delta.toFixed(1)}${unit}</span>`
+        : `<span class="trend-down">▼ ${delta.toFixed(1)}${unit}</span>`;
+    };
+
+    const rows = SENSOR_SHEETS.map(sensor => {
+      const allRows = (sensorData[sensor] || []).filter(r => r.timestamp);
+      const latest  = allRows[allRows.length - 1] || null;
+      if (!latest) return null;
+      const temp     = latest.temperature ?? null;
+      const humidity = latest.humidity    ?? null;
+      // Find reading closest to 24 h before the latest timestamp
+      const latestMs = new Date(latest.timestamp).getTime();
+      const targetMs = latestMs - 24 * 60 * 60 * 1000;
+      let prev = null, bestDiff = Infinity;
+      for (let i = allRows.length - 2; i >= 0; i--) {
+        const t = new Date(allRows[i].timestamp).getTime();
+        const diff = Math.abs(t - targetMs);
+        if (diff < bestDiff) { bestDiff = diff; prev = allRows[i]; }
+        if (t < targetMs - 4 * 60 * 60 * 1000) break;
+      }
+      const tempDelta = (temp != null && prev?.temperature != null) ? temp - prev.temperature : null;
+      const humDelta  = (humidity != null && prev?.humidity != null) ? humidity - prev.humidity : null;
+      return { sensor, temp, humidity, tempDelta, humDelta };
+    }).filter(Boolean);
+
+    roomHighlightsEl.innerHTML = rows.length
+      ? rows.map(r => `
+        <div class="trend-row">
+          <span class="trend-room">${r.sensor}</span>
+          <span class="trend-val">${r.temp != null ? r.temp.toFixed(1) + '°C' : '—'} ${trendArrow(r.tempDelta, '°')}</span>
+          <span class="trend-val">💧${r.humidity != null ? r.humidity.toFixed(1) + '%' : '—'} ${trendArrow(r.humDelta, '%')}</span>
+        </div>`).join('')
+      : '<p class="top3-empty">No data available</p>';
+  }
+
+  // -- Biggest temperature swing in period --
+  const tempSwingEl = document.getElementById('generalTempSwing');
+  if (tempSwingEl && sensorData) {
+    const { dateFrom, dateTo } = readFilters();
+    const swings = SENSOR_SHEETS.map(sensor => {
+      const rows = (sensorData[sensor] || []).filter(r => {
+        if (!r.timestamp) return false;
+        const day = r.timestamp.slice(0, 10);
+        return day >= dateFrom && day <= dateTo;
+      });
+      const temps = rows.map(r => r.temperature).filter(v => v != null);
+      if (temps.length < 2) return null;
+      const min = Math.min(...temps), max = Math.max(...temps);
+      return { sensor, min, max, swing: max - min };
+    }).filter(Boolean).sort((a, b) => b.swing - a.swing);
+
+    const medals = ['🥇','🥈','🥉'];
+    const maxSwing = swings[0]?.swing || 1;
+    tempSwingEl.innerHTML = swings.length
+      ? swings.slice(0, 5).map((s, i) => {
+          const pct   = Math.round((s.swing / maxSwing) * 100);
+          const color = SENSOR_COLORS[s.sensor].line;
+          return `<div class="top3-item">
+            <div class="top3-header">
+              <span class="top3-medal">${medals[i] || ''}</span>
+              <span class="top3-name">${s.sensor}</span>
+              <span class="top3-value">${s.swing.toFixed(1)}° &nbsp;<span style="font-size:0.72rem;color:var(--text-muted)">${s.min.toFixed(1)}–${s.max.toFixed(1)}°C</span></span>
+            </div>
+            <div class="top3-bar-bg"><div class="top3-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          </div>`;
+        }).join('')
+      : '<p class="top3-empty">No data available</p>';
+  }
+}
+
+// ==========================================================
+// LIVE PAGE
+// ==========================================================
+function renderLivePage() {
+  if (!sensorData) return;
+
+  // ── Collect latest sensor readings ──────────────────────────────────────
+  const roomData = SENSOR_SHEETS.map(sensor => {
+    const rows    = (sensorData[sensor] || []).filter(r => r.timestamp);
+    const latest  = rows[rows.length - 1] || null;
+    const temp     = latest?.temperature ?? null;
+    const humidity = latest?.humidity    ?? null;
+    const comfort  = getComfortStatus(temp, humidity);
+    const mold     = getMoldRisk(temp, humidity);
+    const ts       = latest?.timestamp || null;
+    return { sensor, temp, humidity, comfort, mold, ts };
+  });
+
+  // ── Summary bar ──────────────────────────────────────────────────────────
+  const summaryBar = document.getElementById('liveSummaryBar');
+  if (summaryBar) {
+    const temps = roomData.filter(r => r.temp != null).map(r => r.temp);
+    const hums  = roomData.filter(r => r.humidity != null).map(r => r.humidity);
+    const avgTemp = temps.length ? temps.reduce((s,v) => s+v, 0) / temps.length : null;
+    const avgHum  = hums.length  ? hums.reduce((s,v) => s+v, 0)  / hums.length  : null;
+    const comfortable = roomData.filter(r => r.comfort.cls === 'comfort-good').length;
+    const problems    = roomData.filter(r => r.comfort.cls === 'comfort-bad' || r.mold).length;
+
+    // Latest device totals — track the date of the most recent row
+    let totalEnergy = 0, totalPower = 0, latestDeviceDate = null;
+    if (appData) {
+      for (const dev of DEVICE_SHEETS) {
+        const rows  = appData[dev] || [];
+        const latest = rows[rows.length - 1];
+        if (latest) {
+          totalEnergy += latest.energy || 0;
+          totalPower  += latest.power  || 0;
+          if (!latestDeviceDate || latest.date > latestDeviceDate) latestDeviceDate = latest.date;
+        }
+      }
+    }
+    // Format the date label honestly: "Today", "Yesterday", or the actual date
+    const todayStr = localDateKey(new Date());
+    const yesterdayStr = localDateKey(new Date(Date.now() - 86400000));
+    let energyDateLabel = latestDeviceDate
+      ? (latestDeviceDate === todayStr ? 'Today' : latestDeviceDate === yesterdayStr ? 'Yesterday' : latestDeviceDate)
+      : '—';
+
+    summaryBar.innerHTML = `
+      <div class="live-summary-kpi">
+        <div class="live-summary-label">🌡️ Avg Temperature</div>
+        <div class="live-summary-value">${avgTemp != null ? avgTemp.toFixed(1) : '—'}<span class="live-summary-unit"> °C</span></div>
+      </div>
+      <div class="live-summary-kpi">
+        <div class="live-summary-label">💧 Avg Humidity</div>
+        <div class="live-summary-value">${avgHum != null ? avgHum.toFixed(1) : '—'}<span class="live-summary-unit"> %</span></div>
+      </div>
+      <div class="live-summary-kpi">
+        <div class="live-summary-label">✅ Comfortable Rooms</div>
+        <div class="live-summary-value">${comfortable}<span class="live-summary-unit"> / ${roomData.length}</span></div>
+      </div>
+      <div class="live-summary-kpi" style="${problems > 0 ? 'border-color:rgba(239,68,68,0.4);' : ''}">
+        <div class="live-summary-label">⚠️ Issues</div>
+        <div class="live-summary-value" style="${problems > 0 ? 'color:#f87171;' : ''}">${problems}<span class="live-summary-unit"> room${problems !== 1 ? 's' : ''}</span></div>
+      </div>
+      <div class="live-summary-kpi">
+        <div class="live-summary-label">⚡ Energy — ${energyDateLabel}</div>
+        <div class="live-summary-value">${totalEnergy.toFixed(2)}<span class="live-summary-unit"> kWh</span></div>
+      </div>`;
+  }
+
+  // ── Room grid — sorted: problems first, then warnings, then ok ───────────
+  const priorityOrder = { 'comfort-bad': 0, 'comfort-ok': 1, 'comfort-good': 2 };
+  const sorted = [...roomData].sort((a, b) => {
+    const pa = a.mold ? -0.5 : priorityOrder[a.comfort.cls] ?? 2;
+    const pb = b.mold ? -0.5 : priorityOrder[b.comfort.cls] ?? 2;
+    return pa - pb;
+  });
+
+  let latestTs = null;
+  const grid = document.getElementById('liveRoomGrid');
+  if (grid) {
+    grid.innerHTML = sorted.map(({ sensor, temp, humidity, comfort, mold, ts }) => {
+      if (ts && (!latestTs || ts > latestTs)) latestTs = ts;
+      const timeLabel = ts ? ts.replace('T', ' ').slice(0, 16) : 'No data';
+      const priorityCls = comfort.cls === 'comfort-bad' || mold
+        ? 'room-card-priority-bad'
+        : comfort.cls === 'comfort-ok' ? 'room-card-priority-warn' : '';
+      return `<div class="room-card ${priorityCls}">
+        <div class="room-card-name">${sensor}</div>
+        <div class="room-card-temp">${temp != null ? temp.toFixed(1) : '—'}<span class="room-card-unit">°C</span></div>
+        <div class="room-card-humidity">💧 ${humidity != null ? humidity.toFixed(1) : '—'}%</div>
+        <span class="comfort-badge ${comfort.cls}">${comfort.emoji} ${comfort.label}</span>
+        ${mold ? `<div class="mold-badge">${mold.emoji} ${mold.label}</div>` : ''}
+        <div class="room-card-ts">🕐 ${timeLabel}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const lastSeenEl = document.getElementById('liveLastSeen');
+  if (lastSeenEl) {
+    lastSeenEl.textContent = latestTs
+      ? 'Last reading: ' + latestTs.replace('T', ' ').slice(0, 16)
+      : 'Last reading: —';
+  }
+
+  // ── Device rows ──────────────────────────────────────────────────────────
+  const devGrid = document.getElementById('liveDeviceGrid');
+  if (devGrid && appData) {
+    devGrid.innerHTML = DEVICE_SHEETS.map(dev => {
+      const rows   = appData[dev] || [];
+      const latest = rows[rows.length - 1] || null;
+      const power  = latest?.power  ?? null;
+      const energy = latest?.energy ?? null;
+      const cost   = latest?.cost   ?? null;
+      const date   = latest?.date   ?? null;
+      const color  = DEVICE_COLORS[dev].line;
+
+      let badgeCls = 'device-badge-off', badgeLabel = '● Off';
+      if (power != null) {
+        if (power > 5)      { badgeCls = 'device-badge-active';  badgeLabel = '● Active'; }
+        else if (power > 0) { badgeCls = 'device-badge-standby'; badgeLabel = '◐ Standby'; }
+      }
+
+      return `<div class="device-live-card-row" style="border-left-color:${color};">
+        <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:${color};border-radius:12px 0 0 12px;"></div>
+        <div class="device-row-badge">
+          <span class="device-live-badge ${badgeCls}">${badgeLabel}</span>
+        </div>
+        <div class="device-row-info">
+          <div class="device-row-name">${dev}</div>
+          <div class="device-row-meta">${power != null ? power.toFixed(0) + ' W' : '—'} &nbsp;·&nbsp; 🗓️ ${date ?? '—'}</div>
+        </div>
+        <div class="device-row-energy">
+          <div class="device-row-kwh">${energy != null ? energy.toFixed(3) : '—'}<span style="font-size:0.8rem;font-weight:400;color:rgba(255,255,255,0.6);"> kWh</span></div>
+          <div class="device-row-cost">${cost != null ? '€ ' + cost.toFixed(2) : '—'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ==========================================================
+// DATA FRESHNESS DISPLAY
+// ==========================================================
+function updateFreshnessDisplay() {
+  const el = document.getElementById('dataFreshness');
+  if (!el) return;
+
+  let latestEnergy = null;
+  if (appData) {
+    for (const dev of DEVICE_SHEETS) {
+      const rows = appData[dev] || [];
+      if (rows.length) {
+        const last = rows[rows.length - 1].date;
+        if (!latestEnergy || last > latestEnergy) latestEnergy = last;
+      }
+    }
+  }
+
+  let latestSensor = null;
+  if (sensorData) {
+    for (const sensor of SENSOR_SHEETS) {
+      const rows = (sensorData[sensor] || []).filter(r => r.timestamp);
+      if (rows.length) {
+        const last = rows[rows.length - 1].timestamp;
+        if (!latestSensor || last > latestSensor) latestSensor = last;
+      }
+    }
+  }
+
+  const parts = [];
+  if (latestEnergy) parts.push('⚡ ' + latestEnergy);
+  if (latestSensor) parts.push('🌡️ ' + latestSensor.replace('T', ' ').slice(0, 16));
+  el.textContent = parts.length ? 'Data as of: ' + parts.join(' · ') : '';
+}
+
+// ==========================================================
+// REFRESH
+// ==========================================================
+async function refreshData() {
+  const btn = document.getElementById('btnRefresh');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Refreshing…'; }
+  try {
+    const [energyData, sensors] = await Promise.all([loadData(), loadSensorData()]);
+    appData = energyData;
+    sensorData = sensors;
+    populateFilters(energyData);
+    render(appData);
+    updateFreshnessDisplay();
+  } catch (_) {
+    // errors already shown via showError()
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Refresh'; }
+  }
+}
+
+// ==========================================================
 // INIT
 // ==========================================================
 currentPage = getCurrentPage();
-if (!window.location.hash) window.location.hash = '#electronics';
+if (!window.location.hash) window.location.hash = '#live';
 applyPageLayout();
 buildUI();
 Promise.all([loadData(), loadSensorData()]).then(([energyData, sensors]) => {
@@ -2076,6 +2795,7 @@ Promise.all([loadData(), loadSensorData()]).then(([energyData, sensors]) => {
   sensorData = sensors;
   populateFilters(energyData);
   render(energyData);
+  updateFreshnessDisplay();
 });
 </script>
 </body>
