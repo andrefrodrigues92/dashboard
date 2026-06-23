@@ -1190,13 +1190,17 @@ async function fetchSheet(sheetName) {
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching sheet "${sheetName}"`);
   const text = await res.text();
   return parseCsv(text)
-    .map(cols => ({
-      date:   parseCsvDate(cols[0]),
-      energy: cols[1] !== undefined && cols[1] !== '' ? parseFloat(cols[1]) : null,
-      power:  cols[2] !== undefined && cols[2] !== '' ? parseFloat(cols[2]) : null,
-      cost:   cols[3] !== undefined && cols[3] !== '' ? parseFloat(cols[3]) : 0,
-    }))
-    .filter(r => r.date !== null && !isNaN(r.energy));
+    .map(cols => {
+      const timestamp = normalizeSheetTimestamp(cols[0]);
+      return {
+        timestamp,
+        date: timestamp ? timestamp.slice(0, 10) : null,
+        energy: cols[1] !== undefined && cols[1] !== '' ? parseFloat(cols[1]) : null,
+        power:  cols[2] !== undefined && cols[2] !== '' ? parseFloat(cols[2]) : null,
+        cost:   cols[3] !== undefined && cols[3] !== '' ? parseFloat(cols[3]) : 0,
+      };
+    })
+    .filter(r => r.timestamp !== null && !isNaN(r.energy));
 }
 
 async function loadData() {
@@ -1763,7 +1767,7 @@ function render(data) {
   }
   const metricLabel = isEnergy ? 'kWh' : 'W';
   document.getElementById('overviewSubtitle').textContent =
-    (device === 'all' ? 'All devices' : (device === 'none' ? 'No device selected' : device)) + ' · ' + metricLabel + ' per day';
+    (device === 'all' ? 'All devices' : (device === 'none' ? 'No device selected' : device)) + ' · ' + metricLabel + ' by timestamp';
   if (!hideDeviceSections) {
     renderWeeklyPattern(filtered, activeDevices, currentMetric);
     if (isEnergy) {
@@ -2081,17 +2085,33 @@ function renderKPIs(filtered, activeDevices) {
 }
 
 function renderOverview(filtered, activeDevices, metric) {
-  // Get union of all dates
-  const allDates = new Set();
-  for (const dev of activeDevices) (filtered[dev] || []).forEach(r => allDates.add(r.date));
-  const labels = [...allDates].sort();
+  // Get union of all timestamps (same granularity used by sensors page).
+  const allTimestamps = new Set();
+  for (const dev of activeDevices) {
+    (filtered[dev] || []).forEach(r => {
+      const ts = r.timestamp || (r.date ? (r.date + 'T00:00') : null);
+      if (ts) allTimestamps.add(ts);
+    });
+  }
+  const timestampKeys = [...allTimestamps].sort();
+  const labels = timestampKeys.map(ts => ts.replace('T', ' '));
+
+  const byTimestampByDevice = {};
+  for (const dev of activeDevices) {
+    const byTimestamp = {};
+    (filtered[dev] || []).forEach(r => {
+      const ts = r.timestamp || (r.date ? (r.date + 'T00:00') : null);
+      if (!ts) return;
+      byTimestamp[ts] = r[metric] || 0;
+    });
+    byTimestampByDevice[dev] = byTimestamp;
+  }
 
   const datasets = activeDevices.map(dev => {
-    const byDate = {};
-    (filtered[dev] || []).forEach(r => byDate[r.date] = r[metric] || 0);
+    const byTimestamp = byTimestampByDevice[dev];
     return {
       label: dev,
-      data: labels.map(d => byDate[d] ?? null),
+      data: timestampKeys.map(ts => byTimestamp[ts] ?? null),
       borderColor: DEVICE_COLORS[dev].line,
       backgroundColor: DEVICE_COLORS[dev].fill,
       fill: true,
@@ -2105,11 +2125,9 @@ function renderOverview(filtered, activeDevices, metric) {
 
   // Dashed total line — only shown when more than one device is visible
   if (activeDevices.length > 1) {
-    const totals = labels.map(d =>
+    const totals = timestampKeys.map(ts =>
       activeDevices.reduce((sum, dev) => {
-        const byDate = {};
-        (filtered[dev] || []).forEach(r => byDate[r.date] = r[metric] || 0);
-        return sum + (byDate[d] || 0);
+        return sum + (byTimestampByDevice[dev]?.[ts] || 0);
       }, 0)
     );
     datasets.push({
@@ -2614,7 +2632,7 @@ function renderLivePage() {
     const comfortable = roomData.filter(r => r.comfort.cls === 'comfort-good').length;
     const problems    = roomData.filter(r => r.comfort.cls === 'comfort-bad' || r.mold).length;
 
-    // Latest device totals — track the date of the most recent row
+    // Latest device totals — track the timestamp of the most recent row
     let totalEnergy = 0, totalPower = 0, latestDeviceDate = null;
     if (appData) {
       for (const dev of DEVICE_SHEETS) {
@@ -2623,15 +2641,21 @@ function renderLivePage() {
         if (latest) {
           totalEnergy += latest.energy || 0;
           totalPower  += latest.power  || 0;
-          if (!latestDeviceDate || latest.date > latestDeviceDate) latestDeviceDate = latest.date;
+          const latestTs = latest.timestamp || (latest.date ? (latest.date + 'T00:00') : null);
+          if (latestTs && (!latestDeviceDate || latestTs > latestDeviceDate)) latestDeviceDate = latestTs;
         }
       }
     }
-    // Format the date label honestly: "Today", "Yesterday", or the actual date
+    // Format the date label honestly: "Today", "Yesterday", or the actual timestamp
     const todayStr = localDateKey(new Date());
     const yesterdayStr = localDateKey(new Date(Date.now() - 86400000));
+    const latestDeviceDay = latestDeviceDate ? latestDeviceDate.slice(0, 10) : null;
     let energyDateLabel = latestDeviceDate
-      ? (latestDeviceDate === todayStr ? 'Today' : latestDeviceDate === yesterdayStr ? 'Yesterday' : latestDeviceDate)
+      ? (latestDeviceDay === todayStr
+          ? 'Today ' + latestDeviceDate.replace('T', ' ').slice(11, 16)
+          : latestDeviceDay === yesterdayStr
+            ? 'Yesterday ' + latestDeviceDate.replace('T', ' ').slice(11, 16)
+            : latestDeviceDate.replace('T', ' ').slice(0, 16))
       : '—';
 
     summaryBar.innerHTML = `
@@ -2701,7 +2725,7 @@ function renderLivePage() {
       const power  = latest?.power  ?? null;
       const energy = latest?.energy ?? null;
       const cost   = latest?.cost   ?? null;
-      const date   = latest?.date   ?? null;
+      const timestamp = latest?.timestamp || (latest?.date ? latest.date + 'T00:00' : null);
       const color  = DEVICE_COLORS[dev].line;
 
       let badgeCls = 'device-badge-off', badgeLabel = '● Off';
@@ -2717,7 +2741,7 @@ function renderLivePage() {
         </div>
         <div class="device-row-info">
           <div class="device-row-name">${dev}</div>
-          <div class="device-row-meta">${power != null ? power.toFixed(0) + ' W' : '—'} &nbsp;·&nbsp; 🗓️ ${date ?? '—'}</div>
+          <div class="device-row-meta">${power != null ? power.toFixed(0) + ' W' : '—'} &nbsp;·&nbsp; 🗓️ ${timestamp ? timestamp.replace('T', ' ').slice(0, 16) : '—'}</div>
         </div>
         <div class="device-row-energy">
           <div class="device-row-kwh">${energy != null ? energy.toFixed(3) : '—'}<span style="font-size:0.8rem;font-weight:400;color:rgba(255,255,255,0.6);"> kWh</span></div>
@@ -2740,7 +2764,8 @@ function updateFreshnessDisplay() {
     for (const dev of DEVICE_SHEETS) {
       const rows = appData[dev] || [];
       if (rows.length) {
-        const last = rows[rows.length - 1].date;
+        const lastRow = rows[rows.length - 1];
+        const last = lastRow?.timestamp || (lastRow?.date ? lastRow.date + 'T00:00' : null);
         if (!latestEnergy || last > latestEnergy) latestEnergy = last;
       }
     }
@@ -2758,7 +2783,7 @@ function updateFreshnessDisplay() {
   }
 
   const parts = [];
-  if (latestEnergy) parts.push('⚡ ' + latestEnergy);
+  if (latestEnergy) parts.push('⚡ ' + latestEnergy.replace('T', ' ').slice(0, 16));
   if (latestSensor) parts.push('🌡️ ' + latestSensor.replace('T', ' ').slice(0, 16));
   el.textContent = parts.length ? 'Data as of: ' + parts.join(' · ') : '';
 }
