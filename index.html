@@ -20,16 +20,48 @@
       --surface2: #252d40;
       --border: #2d3a52;
       --accent: #38bdf8;
-      --accent2: #3d9585;
-      --accent3: #4a7a9b;
-      --accent4: #d4a843;
+      --accent2: #a78bfa;
+      --accent3: #34d399;
+      --accent4: #f59e0b;
       --text: #e8edf5;
       --text-muted: #8090a8;
-      --success: #3d9585;
+      --success: #34d399;
       --warning: #f59e0b;
-      --kpi-teal: #3a8c7e;
-      --kpi-orange: #d95f1e;
-      --kpi-blue: #3d6b8c;
+      --kpi-teal: #2f8f82;
+      --kpi-orange: #c86a26;
+      --kpi-blue: #3f6f9d;
+      --status-good: #5eead4;
+      --status-good-bg: rgba(52, 211, 153, 0.2);
+      --status-good-border: rgba(52, 211, 153, 0.34);
+      --status-warn: #fbbf24;
+      --status-warn-bg: rgba(245, 158, 11, 0.18);
+      --status-warn-border: rgba(245, 158, 11, 0.3);
+      --status-bad: #f87171;
+      --status-bad-bg: rgba(239, 68, 68, 0.18);
+      --status-bad-border: rgba(239, 68, 68, 0.3);
+      --status-off: #94a3b8;
+      --status-off-bg: rgba(100, 116, 139, 0.18);
+      --status-off-border: rgba(100, 116, 139, 0.3);
+      --header-bg: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      --chart-grid: rgba(51, 65, 85, 0.5);
+      --chart-tick: #94a3b8;
+      --chart-title: #64748b;
+      --chart-legend: #e8edf5;
+      --chart-donut-border: #1e2638;
+    }
+    :root[data-theme="light"] {
+      --bg: #f3f6fb;
+      --surface: #ffffff;
+      --surface2: #edf2fa;
+      --border: #d5deeb;
+      --text: #0f172a;
+      --text-muted: #5b6b84;
+      --header-bg: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+      --chart-grid: rgba(148, 163, 184, 0.35);
+      --chart-tick: #475569;
+      --chart-title: #64748b;
+      --chart-legend: #1e293b;
+      --chart-donut-border: #ffffff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -39,7 +71,7 @@
       min-height: 100vh;
     }
     header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      background: var(--header-bg);
       border-bottom: 1px solid var(--border);
       padding: 20px 32px;
       display: flex;
@@ -49,11 +81,12 @@
       gap: 16px;
     }
     header h1 {
-      font-size: 1.5rem;
+      font-size: 1.55rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
+      letter-spacing: -0.01em;
     }
     header h1 span.icon { font-size: 1.8rem; }
     .source-badge {
@@ -89,13 +122,19 @@
       font-weight: 600;
       padding: 6px 12px;
       border-radius: 999px;
-      transition: background 0.15s, color 0.15s;
+      transition: background 0.15s, color 0.15s, transform 0.12s;
+    }
+    .page-link:hover {
+      color: var(--text);
+      background: rgba(56,189,248,0.12);
+      transform: translateY(-1px);
     }
     .page-link.active {
       background: var(--accent);
       color: #0f172a;
     }
     main { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+    section[id] { scroll-margin-top: 92px; }
 
     /* Filters */
     .filters {
@@ -108,6 +147,10 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 16px 20px;
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      backdrop-filter: blur(8px);
     }
     .filter-group { display: flex; flex-direction: column; gap: 6px; }
     .filter-group label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 500; }
@@ -152,9 +195,44 @@
     }
     .btn:hover { opacity: 0.9; filter: brightness(1.12); transform: translateY(-1px); }
     .btn:active { transform: translateY(0); }
+    .btn:focus-visible,
+    .page-link:focus-visible,
+    .view-toggle button:focus-visible,
+    .quick-range-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     .btn-primary { background: var(--accent); color: #0f172a; }
     .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
     .btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+    .theme-toggle { min-width: 98px; }
+    .quick-range {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .quick-range-btn {
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .quick-range-btn:hover {
+      color: var(--text);
+      border-color: #475569;
+    }
+    .quick-range-btn.active {
+      color: #0f172a;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
 
     /* KPI Cards */
     .kpi-grid {
@@ -184,10 +262,10 @@
     .kpi-card:nth-child(4n + 2) { background: var(--kpi-teal); }
     .kpi-card:nth-child(4n + 3) { background: var(--kpi-orange); }
     .kpi-card:nth-child(4n + 4) { background: var(--kpi-blue); }
-    .kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.75); font-weight: 500; margin-bottom: 8px; }
-    .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1; color: #fff; }
-    .kpi-unit { font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.8); margin-left: 4px; }
-    .kpi-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 6px; font-style: italic; }
+    .kpi-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.78); font-weight: 600; margin-bottom: 10px; }
+    .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.05; color: #fff; letter-spacing: -0.015em; }
+    .kpi-unit { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.82); margin-left: 4px; }
+    .kpi-sub { font-size: 0.77rem; color: rgba(255,255,255,0.74); margin-top: 7px; font-style: italic; }
 
     /* Top 3 devices */
     .top3-item { margin-bottom: 20px; }
@@ -225,6 +303,7 @@
       padding: 20px 24px;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
     }
     .chart-card::before {
       content: '';
@@ -242,8 +321,9 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .chart-title { font-size: 1rem; font-weight: 600; }
-    .chart-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .chart-actions { display: flex; gap: 6px; }
+    .chart-title { font-size: 1.03rem; font-weight: 650; letter-spacing: -0.01em; }
+    .chart-subtitle { font-size: 0.79rem; color: var(--text-muted); margin-top: 3px; line-height: 1.35; }
     .chart-badge {
       font-size: 0.72rem;
       padding: 3px 10px;
@@ -251,9 +331,9 @@
       font-weight: 500;
     }
     .badge-blue { background: rgba(56,189,248,0.15); color: var(--accent); }
-    .badge-purple { background: rgba(129,140,248,0.15); color: var(--accent2); }
+    .badge-purple { background: rgba(167,139,250,0.15); color: var(--accent2); }
     .badge-green { background: rgba(52,211,153,0.15); color: var(--accent3); }
-    .badge-orange { background: rgba(251,146,60,0.15); color: var(--accent4); }
+    .badge-orange { background: rgba(245,158,11,0.15); color: var(--accent4); }
     .chart-container { position: relative; height: 260px; }
     .chart-mobile-legend {
       display: none;
@@ -334,9 +414,14 @@
       font-weight: 500;
       padding: 8px 12px;
       border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      z-index: 1;
     }
     tbody td { padding: 10px 12px; border-bottom: 1px solid rgba(51,65,85,0.5); }
     tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even):not(.total-row) td { background: rgba(37,45,64,0.35); }
     tbody tr:hover td { background: var(--surface2); }
     tbody tr.total-row td {
       border-top: 2px solid var(--border);
@@ -404,19 +489,6 @@
     .room-card-temp { font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1; }
     .room-card-unit { font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.7); }
     .room-card-humidity { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; }
-    .comfort-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 10px;
-      font-size: 0.7rem;
-      padding: 3px 9px;
-      border-radius: 999px;
-      font-weight: 600;
-    }
-    .comfort-good { background: rgba(61,149,133,0.2); color: #5ecfba; border: 1px solid rgba(61,149,133,0.3); }
-    .comfort-ok   { background: rgba(245,158,11,0.18); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
-    .comfort-bad  { background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
     .mold-badge { display: flex; align-items: center; gap: 4px; margin-top: 5px; font-size: 0.68rem; color: #fbbf24; }
 
     footer {
@@ -445,6 +517,7 @@
       }
       .filter-actions { grid-column: 1 / -1; }
       .filter-actions .btn { width: 100%; padding: 8px; font-size: 0.82rem; }
+      .quick-range-btn { padding: 5px 9px; font-size: 0.68rem; }
 
       /* KPI — 2-column grid */
       .kpi-grid  { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
@@ -464,6 +537,7 @@
       .chart-card     { padding: 14px; }
       .chart-container { height: 300px !important; }
       .chart-header   { flex-direction: column; gap: 8px; }
+      .chart-actions  { width: 100%; }
       .chart-mobile-legend { display: flex; }
       .view-toggle button { padding: 9px 12px; font-size: 0.75rem; }
 
@@ -645,12 +719,11 @@
       white-space: nowrap;
     }
     .device-row-cost { font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 2px; }
-    .device-badge-active  { background: rgba(61,149,133,0.2);  color: #5ecfba; border: 1px solid rgba(61,149,133,0.3); }
-    .device-badge-standby { background: rgba(245,158,11,0.18); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
-    .device-badge-off     { background: rgba(100,116,139,0.18);color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+    .device-badge-active  { background: var(--status-good-bg);  color: var(--status-good); border: 1px solid var(--status-good-border); }
+    .device-badge-standby { background: var(--status-warn-bg);  color: var(--status-warn); border: 1px solid var(--status-warn-border); }
+    .device-badge-off     { background: var(--status-off-bg); color: var(--status-off); border: 1px solid var(--status-off-border); }
     /* Room card priority border */
     .room-card-priority-bad  { border-color: rgba(239,68,68,0.5); }
-    .room-card-priority-warn { border-color: rgba(245,158,11,0.4); }
     .room-card-ts {
       font-size: 0.65rem;
       color: var(--text-muted);
@@ -661,7 +734,7 @@
     }
     @media (max-width: 640px) {
       .live-room-grid { grid-template-columns: repeat(2, 1fr); }
-      /* Summary bar: 2-column grid so 5 items = 2+2+1, looks intentional */
+      /* Summary bar: 2-column grid so 4 items = 2+2 */
       .live-summary-bar { display: grid; grid-template-columns: 1fr 1fr; }
       /* Device rows: 2-col on mobile — badge left (spanning both rows), name+energy right */
       .device-live-card-row { grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: 8px 10px; }
@@ -691,6 +764,22 @@
       }
       #dataFreshness { display: none; } /* redundant with liveLastSeen on small screens */
     }
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .kpi-card:hover,
+      .room-card:hover,
+      .device-live-card-row:hover,
+      .btn:hover {
+        transform: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -705,6 +794,7 @@
     </nav>
     <div class="source-badge"><span></span>Google Sheets · live</div>
     <div id="dataFreshness" class="freshness-info"></div>
+    <button class="btn btn-ghost btn-sm theme-toggle" id="btnTheme" onclick="toggleTheme()" title="Switch theme">☀️ Light</button>
     <button class="btn btn-ghost btn-sm" id="btnRefresh" onclick="refreshData()" title="Refresh data">🔄 Refresh</button>
   </div>
 </header>
@@ -726,6 +816,13 @@
     <div class="filter-group">
       <label>Period</label>
       <input id="selPeriod" type="text" placeholder="Select period" readonly />
+      <div class="quick-range" aria-label="Quick period shortcuts">
+        <button type="button" class="quick-range-btn" data-range="today">Today</button>
+        <button type="button" class="quick-range-btn" data-range="7d">7D</button>
+        <button type="button" class="quick-range-btn" data-range="30d">30D</button>
+        <button type="button" class="quick-range-btn" data-range="mtd">MTD</button>
+        <button type="button" class="quick-range-btn" data-range="all">All</button>
+      </div>
     </div>
     <div class="filter-group">
       <label>Sensor</label>
@@ -808,10 +905,10 @@
   <div class="chart-card full" style="margin-bottom:20px;" id="energyOverviewCard">
     <div class="chart-header">
       <div>
-        <div class="chart-title">Daily Energy Consumption</div>
-        <div class="chart-subtitle" id="overviewSubtitle">All devices · kWh per day</div>
+        <div class="chart-title" id="overviewTitle">Daily Cumulative Energy Consumption</div>
+        <div class="chart-subtitle" id="overviewSubtitle">All devices · cumulative kWh per day</div>
       </div>
-	  <div style="display:flex;gap:6px;">
+	  <div class="chart-actions">
 	  <button class="btn btn-ghost btn-sm"
 			  onclick="zoomChart('chartOverview', 1.2)"
 			  title="Zoom in">
@@ -863,7 +960,7 @@
         <div class="chart-title">Monthly Consumption by Device</div>
         <div class="chart-subtitle">Total kWh per month · stacked view</div>
       </div>
-    <div style="display:flex;gap:6px;">
+    <div class="chart-actions">
   <button class="btn btn-ghost btn-sm"
       onclick="zoomChart('chartMonthly', 1.2)"
       title="Zoom in">
@@ -972,7 +1069,7 @@
         <div class="chart-title">Temperature by Room</div>
         <div class="chart-subtitle" id="sensorTempSubtitle">Temperature readings from sensor tabs</div>
       </div>
-	  <div style="display:flex;gap:6px;">
+	  <div class="chart-actions">
 	  <button class="btn btn-ghost btn-sm"
 			  onclick="zoomChart('chartTempOverview', 1.2)"
 			  title="Zoom in">
@@ -1004,7 +1101,7 @@
         <div class="chart-title">Humidity by Room</div>
         <div class="chart-subtitle" id="sensorHumiditySubtitle">Humidity readings from sensor tabs</div>
       </div>
-	  <div style="display:flex;gap:6px;">
+	  <div class="chart-actions">
 	  <button class="btn btn-ghost btn-sm"
 			  onclick="zoomChart('chartHumidityOverview', 1.2)"
 			  title="Zoom in">
@@ -1284,6 +1381,7 @@ function buildColorMap(names, seed = 0) {
 const DEVICE_COLORS = buildColorMap(DEVICE_SHEETS, 18);
 const SENSOR_COLORS = buildColorMap(SENSOR_SHEETS, 210);
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const THEME_STORAGE_KEY = 'smartthings-dashboard-theme';
 
 function fmt(n) { return typeof n === 'number' ? n.toFixed(2) : '—'; }
 
@@ -1321,15 +1419,24 @@ function monthLabel(ym) {
 
 const isMobile = () => window.innerWidth <= 640;
 
-const chartDefaults = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-  scales: {
-    x: { grid: { color: 'rgba(51,65,85,0.5)' }, ticks: { color: '#94a3b8', maxTicksLimit: 12, font: { size: 11 } } },
-    y: { grid: { color: 'rgba(51,65,85,0.5)' }, ticks: { color: '#94a3b8', font: { size: 11 } } }
-  }
-};
+function cssVar(name, fallback = '') {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
+function getChartDefaults() {
+  const grid = cssVar('--chart-grid', 'rgba(51,65,85,0.5)');
+  const tick = cssVar('--chart-tick', '#94a3b8');
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+    scales: {
+      x: { grid: { color: grid }, ticks: { color: tick, maxTicksLimit: 12, font: { size: 11 } } },
+      y: { grid: { color: grid }, ticks: { color: tick, font: { size: 11 } } }
+    }
+  };
+}
 
 // ==========================================================
 // CHART INSTANCES
@@ -1343,14 +1450,17 @@ function destroyChart(id) {
 function makeLineChart(canvasId, labels, datasets, yLabel = 'kWh') {
   destroyChart(canvasId);
   const ctx = document.getElementById(canvasId).getContext('2d');
+  const defaults = getChartDefaults();
+  const legendColor = cssVar('--chart-legend', '#e8edf5');
+  const titleColor = cssVar('--chart-title', '#64748b');
   charts[canvasId] = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets },
     options: {
-      ...chartDefaults,
+      ...defaults,
       plugins: {
-        ...chartDefaults.plugins,
-        legend: { display: datasets.length > 1, labels: { color: '#94a3b8', font: { size: 12 }, boxWidth: 12, padding: 16 } },
+        ...defaults.plugins,
+        legend: { display: datasets.length > 1, labels: { color: legendColor, font: { size: 12 }, boxWidth: 12, padding: 16 } },
         tooltip: {
           enabled: true,
           mode: 'index', intersect: false,
@@ -1362,8 +1472,8 @@ function makeLineChart(canvasId, labels, datasets, yLabel = 'kWh') {
         }
       },
       scales: {
-        ...chartDefaults.scales,
-        y: { ...chartDefaults.scales.y, title: { display: true, text: yLabel, color: '#64748b', font: { size: 11 } } }
+        ...defaults.scales,
+        y: { ...defaults.scales.y, title: { display: true, text: yLabel, color: titleColor, font: { size: 11 } } }
       }
     }
   });
@@ -1374,14 +1484,17 @@ function makeLineChart(canvasId, labels, datasets, yLabel = 'kWh') {
 function makeBarChart(canvasId, labels, datasets, yLabel = 'kWh') {
   destroyChart(canvasId);
   const ctx = document.getElementById(canvasId).getContext('2d');
+  const defaults = getChartDefaults();
+  const legendColor = cssVar('--chart-legend', '#e8edf5');
+  const titleColor = cssVar('--chart-title', '#64748b');
   charts[canvasId] = new Chart(ctx, {
     type: 'bar',
     data: { labels, datasets },
     options: {
-      ...chartDefaults,
+      ...defaults,
       plugins: {
-        ...chartDefaults.plugins,
-        legend: { display: datasets.length > 1, labels: { color: '#94a3b8', font: { size: 12 }, boxWidth: 12, padding: 16 } },
+        ...defaults.plugins,
+        legend: { display: datasets.length > 1, labels: { color: legendColor, font: { size: 12 }, boxWidth: 12, padding: 16 } },
         tooltip: {
           enabled: true,
           mode: 'index', intersect: false,
@@ -1393,9 +1506,9 @@ function makeBarChart(canvasId, labels, datasets, yLabel = 'kWh') {
         }
       },
       scales: {
-        ...chartDefaults.scales,
-        x: { ...chartDefaults.scales.x, stacked: true },
-        y: { ...chartDefaults.scales.y, stacked: true, title: { display: true, text: yLabel, color: '#64748b', font: { size: 11 } } }
+        ...defaults.scales,
+        x: { ...defaults.scales.x, stacked: true },
+        y: { ...defaults.scales.y, stacked: true, title: { display: true, text: yLabel, color: titleColor, font: { size: 11 } } }
       }
     }
   });
@@ -1407,6 +1520,10 @@ function makeHorizontalBarChart(canvasId, labels, data, colors, unit = '') {
   destroyChart(canvasId);
   const ctx = document.getElementById(canvasId)?.getContext('2d');
   if (!ctx) return;
+  const grid = cssVar('--chart-grid', 'rgba(51,65,85,0.5)');
+  const tick = cssVar('--chart-tick', '#94a3b8');
+  const titleColor = cssVar('--chart-title', '#64748b');
+  const legendColor = cssVar('--chart-legend', '#e8edf5');
   charts[canvasId] = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -1430,13 +1547,13 @@ function makeHorizontalBarChart(canvasId, labels, data, colors, unit = '') {
       },
       scales: {
         x: {
-          grid: { color: 'rgba(51,65,85,0.5)' },
-          ticks: { color: '#94a3b8', font: { size: 11 } },
-          title: { display: !!unit, text: unit, color: '#64748b', font: { size: 11 } }
+          grid: { color: grid },
+          ticks: { color: tick, font: { size: 11 } },
+          title: { display: !!unit, text: unit, color: titleColor, font: { size: 11 } }
         },
         y: {
           grid: { display: false },
-          ticks: { color: '#e8edf5', font: { size: 12 } }
+          ticks: { color: legendColor, font: { size: 12 } }
         }
       }
     }
@@ -1447,6 +1564,8 @@ function makeDoughnutChart(canvasId, labels, data, colors, unitLabel = 'kWh') {
   destroyChart(canvasId);
   const ctx = document.getElementById(canvasId)?.getContext('2d');
   if (!ctx) return;
+  const donutBorder = cssVar('--chart-donut-border', '#1e2638');
+  const legendColor = cssVar('--chart-legend', '#e8edf5');
   charts[canvasId] = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -1454,7 +1573,7 @@ function makeDoughnutChart(canvasId, labels, data, colors, unitLabel = 'kWh') {
       datasets: [{
         data,
         backgroundColor: colors,
-        borderColor: '#1e2638',
+        borderColor: donutBorder,
         borderWidth: 3,
         hoverOffset: 8,
       }]
@@ -1467,7 +1586,7 @@ function makeDoughnutChart(canvasId, labels, data, colors, unitLabel = 'kWh') {
         legend: {
           display: true,
           position: 'right',
-          labels: { color: '#e8edf5', font: { size: 12 }, boxWidth: 12, padding: 14 }
+          labels: { color: legendColor, font: { size: 12 }, boxWidth: 12, padding: 14 }
         },
         tooltip: {
           callbacks: {
@@ -1654,6 +1773,51 @@ function getDefaultRangeForPage(allDates, page) {
   return { from: minDate, to: maxDate };
 }
 
+function dateDaysAgo(days) {
+  return localDateKey(new Date(Date.now() - days * 24 * 60 * 60 * 1000));
+}
+
+function computeQuickRange(key, allDates) {
+  if (!allDates.length) return { from: null, to: null };
+  const minDate = allDates[0];
+  const maxDate = allDates[allDates.length - 1];
+  const today = clampDateToBounds(localDateKey(new Date()), minDate, maxDate);
+  const monthKey = today.slice(0, 7);
+  const monthDates = allDates.filter(d => d.startsWith(monthKey + '-'));
+
+  if (key === 'today') return { from: today, to: today };
+  if (key === '7d') return { from: clampDateToBounds(dateDaysAgo(6), minDate, maxDate), to: today };
+  if (key === '30d') return { from: clampDateToBounds(dateDaysAgo(29), minDate, maxDate), to: today };
+  if (key === 'mtd') return monthDates.length ? { from: monthDates[0], to: monthDates[monthDates.length - 1] } : { from: minDate, to: maxDate };
+  return { from: minDate, to: maxDate };
+}
+
+function setActiveQuickRange(activeKey) {
+  document.querySelectorAll('.quick-range-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.range === activeKey);
+  });
+}
+
+function syncQuickRangeBySelection(dateFrom, dateTo, allDates) {
+  const keys = ['today', '7d', '30d', 'mtd', 'all'];
+  const matched = keys.find(key => {
+    const range = computeQuickRange(key, allDates);
+    return range.from === dateFrom && range.to === dateTo;
+  });
+  setActiveQuickRange(matched || null);
+}
+
+function applyQuickRange(key) {
+  if (!appData || !periodPicker) return;
+  const { allDates } = getAvailableDates(appData);
+  const range = computeQuickRange(key, allDates);
+  if (!range.from || !range.to) return;
+  periodPicker.setDate([range.from, range.to], false);
+  pagePeriodSelection[currentPage] = { from: range.from, to: range.to };
+  setActiveQuickRange(key);
+  render(appData);
+}
+
 function getPickerRange() {
   const picked = periodPicker?.selectedDates || [];
   if (!picked.length) return null;
@@ -1685,6 +1849,7 @@ function populateFilters(data) {
     }
   });
   pagePeriodSelection[currentPage] = { from: fromDate, to: toDate };
+  syncQuickRangeBySelection(fromDate, toDate, allDates);
 
   document.getElementById('selDevice').value = 'all';
 }
@@ -1717,6 +1882,7 @@ function readFilters() {
 function resetFilters() {
   populateFilters(appData);
   document.getElementById('selSensor').value = 'all';
+  setActiveQuickRange(null);
   render(appData);
 }
 
@@ -1725,6 +1891,7 @@ function resetFilters() {
 // ==========================================================
 function render(data) {
   const { dateFrom, dateTo, device, sensor } = readFilters();
+  syncQuickRangeBySelection(dateFrom, dateTo, getAvailableDates(data).allDates);
   const filtered = filterData(data, dateFrom, dateTo);
 
   applyPageLayout();
@@ -1765,9 +1932,11 @@ function render(data) {
   } else {
     destroyChart('chartOverview');
   }
-  const metricLabel = isEnergy ? 'kWh' : 'W';
+  const overviewTitle = document.getElementById('overviewTitle');
+  if (overviewTitle) overviewTitle.textContent = isEnergy ? 'Daily Cumulative Energy Consumption' : 'Power Readings';
+  const metricLabel = isEnergy ? 'cumulative kWh per day' : 'W by timestamp';
   document.getElementById('overviewSubtitle').textContent =
-    (device === 'all' ? 'All devices' : (device === 'none' ? 'No device selected' : device)) + ' · ' + metricLabel + ' by timestamp';
+    (device === 'all' ? 'All devices' : (device === 'none' ? 'No device selected' : device)) + ' · ' + metricLabel;
   if (!hideDeviceSections) {
     renderWeeklyPattern(filtered, activeDevices, currentMetric);
     if (isEnergy) {
@@ -2085,6 +2254,7 @@ function renderKPIs(filtered, activeDevices) {
 }
 
 function renderOverview(filtered, activeDevices, metric) {
+  const isEnergy = metric === 'energy';
   // Get union of all timestamps (same granularity used by sensors page).
   const allTimestamps = new Set();
   for (const dev of activeDevices) {
@@ -2107,11 +2277,28 @@ function renderOverview(filtered, activeDevices, metric) {
     byTimestampByDevice[dev] = byTimestamp;
   }
 
+  const cumulativeByDay = (valueAtTs) => {
+    let runningTotal = 0;
+    let currentDay = null;
+    return timestampKeys.map(ts => {
+      const day = ts.slice(0, 10);
+      if (day !== currentDay) {
+        currentDay = day;
+        runningTotal = 0;
+      }
+      runningTotal += valueAtTs(ts) || 0;
+      return parseFloat(runningTotal.toFixed(3));
+    });
+  };
+
   const datasets = activeDevices.map(dev => {
     const byTimestamp = byTimestampByDevice[dev];
+    const data = isEnergy
+      ? cumulativeByDay(ts => byTimestamp[ts] || 0)
+      : timestampKeys.map(ts => byTimestamp[ts] ?? 0);
     return {
       label: dev,
-      data: timestampKeys.map(ts => byTimestamp[ts] ?? null),
+      data,
       borderColor: DEVICE_COLORS[dev].line,
       backgroundColor: DEVICE_COLORS[dev].fill,
       fill: true,
@@ -2125,11 +2312,17 @@ function renderOverview(filtered, activeDevices, metric) {
 
   // Dashed total line — only shown when more than one device is visible
   if (activeDevices.length > 1) {
-    const totals = timestampKeys.map(ts =>
-      activeDevices.reduce((sum, dev) => {
-        return sum + (byTimestampByDevice[dev]?.[ts] || 0);
-      }, 0)
-    );
+    const totals = isEnergy
+      ? cumulativeByDay(ts =>
+          activeDevices.reduce((sum, dev) => {
+            return sum + (byTimestampByDevice[dev]?.[ts] || 0);
+          }, 0)
+        )
+      : timestampKeys.map(ts =>
+          activeDevices.reduce((sum, dev) => {
+            return sum + (byTimestampByDevice[dev]?.[ts] || 0);
+          }, 0)
+        );
     datasets.push({
       label: 'Total',
       data: totals,
@@ -2183,11 +2376,20 @@ function renderTable(filtered, activeDevices) {
   const tbody = document.getElementById('summaryTable');
   tbody.innerHTML = '';
 
-  // Get max values for bar sizing
+  // Pre-compute monthly aggregations once per device to keep re-renders fast.
+  const monthlyByDev = {};
+  const monthlyCostByDev = {};
   const maxByDev = {};
+  const totalsByDev = {};
+  const costsByDev = {};
   for (const dev of activeDevices) {
     const byMonth = groupByMonth(filtered[dev] || [], 'energy');
+    const byCost = groupByMonth(filtered[dev] || [], 'cost');
+    monthlyByDev[dev] = byMonth;
+    monthlyCostByDev[dev] = byCost;
     maxByDev[dev] = Math.max(...Object.values(byMonth), 1);
+    totalsByDev[dev] = (filtered[dev] || []).reduce((s, r) => s + (r.energy || 0), 0);
+    costsByDev[dev] = (filtered[dev] || []).reduce((s, r) => s + (r.cost || 0), 0);
   }
 
   for (const ym of allMonths) {
@@ -2195,8 +2397,8 @@ function renderTable(filtered, activeDevices) {
     let html = '<td><strong>' + monthLabel(ym) + '</strong></td>';
     let rowTotal = 0, rowCost = 0;
     for (const dev of activeDevices) {
-      const byMonth = groupByMonth(filtered[dev] || [], 'energy');
-      const byCost  = groupByMonth(filtered[dev] || [], 'cost');
+      const byMonth = monthlyByDev[dev];
+      const byCost  = monthlyCostByDev[dev];
       const val = byMonth[ym] || 0;
       rowTotal += val;
       rowCost  += byCost[ym] || 0;
@@ -2219,8 +2421,8 @@ function renderTable(filtered, activeDevices) {
   let html = '<td style="text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);font-size:0.75rem">Total</td>';
   let grandTotal = 0, grandCost = 0;
   for (const dev of activeDevices) {
-    const total = (filtered[dev] || []).reduce((s, r) => s + (r.energy || 0), 0);
-    const cost  = (filtered[dev] || []).reduce((s, r) => s + (r.cost   || 0), 0);
+    const total = totalsByDev[dev] || 0;
+    const cost  = costsByDev[dev] || 0;
     grandTotal += total;
     grandCost  += cost;
     html += '<td style="font-variant-numeric:tabular-nums">' + total.toFixed(2) + '</td>';
@@ -2258,6 +2460,36 @@ function setMetric(m) {
   document.getElementById('btnEnergy').classList.toggle('active', m === 'energy');
   document.getElementById('btnPower').classList.toggle('active', m === 'power');
   render(appData);
+}
+
+function updateThemeButton(theme) {
+  const btn = document.getElementById('btnTheme');
+  if (!btn) return;
+  const isLight = theme === 'light';
+  btn.textContent = isLight ? '🌙 Dark' : '☀️ Light';
+  btn.title = isLight ? 'Switch to dark theme' : 'Switch to light theme';
+  btn.setAttribute('aria-pressed', String(isLight));
+}
+
+function applyTheme(theme, persist = true, rerender = true) {
+  const normalized = theme === 'light' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', normalized);
+  updateThemeButton(normalized);
+  if (persist) localStorage.setItem(THEME_STORAGE_KEY, normalized);
+  if (rerender && appData) {
+    render(appData);
+    updateFreshnessDisplay();
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  applyTheme(current === 'light' ? 'dark' : 'light');
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_STORAGE_KEY);
+  applyTheme(saved === 'light' ? 'light' : 'dark', false, false);
 }
 
 // ==========================================================
@@ -2308,6 +2540,10 @@ function buildUI() {
   document.getElementById(id).addEventListener('change', () => render(appData));
 });
 
+document.querySelectorAll('.quick-range-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyQuickRange(btn.dataset.range));
+});
+
 window.addEventListener('hashchange', () => {
   const previousPage = currentPage;
   const previousRange = getPickerRange();
@@ -2331,20 +2567,6 @@ window.addEventListener('hashchange', () => {
   }
   else applyPageLayout();
 });
-
-// ==========================================================
-// ROOM STATUS GRID — comfort + mold indicators
-// ==========================================================
-function getComfortStatus(temp, humidity) {
-  if (temp == null || humidity == null) return { label: 'No data', cls: 'comfort-ok', emoji: '❓' };
-  const tempIdeal = temp >= 20 && temp <= 24;
-  const humIdeal  = humidity >= 40 && humidity <= 60;
-  if (tempIdeal && humIdeal) return { label: 'Comfortable', cls: 'comfort-good', emoji: '✅' };
-  const tempAcc = temp >= 18 && temp <= 27;
-  const humAcc  = humidity >= 35 && humidity <= 65;
-  if (tempAcc && humAcc) return { label: 'Acceptable', cls: 'comfort-ok', emoji: '🟡' };
-  return { label: 'Uncomfortable', cls: 'comfort-bad', emoji: '❌' };
-}
 
 function getMoldRisk(temp, humidity) {
   if (humidity == null) return null;
@@ -2391,6 +2613,9 @@ function renderWeeklyPattern(filtered, activeDevices, metric) {
   const yLabel = metric === 'energy' ? 'kWh' : 'W';
   const nonZero = data.filter(v => v > 0);
   const avgVal = nonZero.length ? nonZero.reduce((s, v) => s + v, 0) / nonZero.length : 0;
+  const grid = cssVar('--chart-grid', 'rgba(51,65,85,0.5)');
+  const tick = cssVar('--chart-tick', '#94a3b8');
+  const titleColor = cssVar('--chart-title', '#64748b');
 
   destroyChart('chartWeeklyPattern');
   const ctx = document.getElementById('chartWeeklyPattern')?.getContext('2d');
@@ -2417,11 +2642,11 @@ function renderWeeklyPattern(filtered, activeDevices, metric) {
         tooltip: { callbacks: { label: c => `Avg: ${c.parsed.y.toFixed(3)} ${yLabel}` } }
       },
       scales: {
-        x: { grid: { color: 'rgba(51,65,85,0.5)' }, ticks: { color: '#94a3b8', font: { size: 12 } } },
+        x: { grid: { color: grid }, ticks: { color: tick, font: { size: 12 } } },
         y: {
-          grid: { color: 'rgba(51,65,85,0.5)' },
-          ticks: { color: '#94a3b8', font: { size: 11 } },
-          title: { display: true, text: `Avg ${yLabel}`, color: '#64748b', font: { size: 11 } },
+          grid: { color: grid },
+          ticks: { color: tick, font: { size: 11 } },
+          title: { display: true, text: `Avg ${yLabel}`, color: titleColor, font: { size: 11 } },
           beginAtZero: true
         }
       }
@@ -2616,10 +2841,9 @@ function renderLivePage() {
     const latest  = rows[rows.length - 1] || null;
     const temp     = latest?.temperature ?? null;
     const humidity = latest?.humidity    ?? null;
-    const comfort  = getComfortStatus(temp, humidity);
     const mold     = getMoldRisk(temp, humidity);
     const ts       = latest?.timestamp || null;
-    return { sensor, temp, humidity, comfort, mold, ts };
+    return { sensor, temp, humidity, mold, ts };
   });
 
   // ── Summary bar ──────────────────────────────────────────────────────────
@@ -2629,8 +2853,7 @@ function renderLivePage() {
     const hums  = roomData.filter(r => r.humidity != null).map(r => r.humidity);
     const avgTemp = temps.length ? temps.reduce((s,v) => s+v, 0) / temps.length : null;
     const avgHum  = hums.length  ? hums.reduce((s,v) => s+v, 0)  / hums.length  : null;
-    const comfortable = roomData.filter(r => r.comfort.cls === 'comfort-good').length;
-    const problems    = roomData.filter(r => r.comfort.cls === 'comfort-bad' || r.mold).length;
+    const problems    = roomData.filter(r => r.mold).length;
 
     // Latest device totals — track the timestamp of the most recent row
     let totalEnergy = 0, totalPower = 0, latestDeviceDate = null;
@@ -2667,10 +2890,6 @@ function renderLivePage() {
         <div class="live-summary-label">💧 Avg Humidity</div>
         <div class="live-summary-value">${avgHum != null ? avgHum.toFixed(1) : '—'}<span class="live-summary-unit"> %</span></div>
       </div>
-      <div class="live-summary-kpi">
-        <div class="live-summary-label">✅ Comfortable Rooms</div>
-        <div class="live-summary-value">${comfortable}<span class="live-summary-unit"> / ${roomData.length}</span></div>
-      </div>
       <div class="live-summary-kpi" style="${problems > 0 ? 'border-color:rgba(239,68,68,0.4);' : ''}">
         <div class="live-summary-label">⚠️ Issues</div>
         <div class="live-summary-value" style="${problems > 0 ? 'color:#f87171;' : ''}">${problems}<span class="live-summary-unit"> room${problems !== 1 ? 's' : ''}</span></div>
@@ -2681,28 +2900,25 @@ function renderLivePage() {
       </div>`;
   }
 
-  // ── Room grid — sorted: problems first, then warnings, then ok ───────────
-  const priorityOrder = { 'comfort-bad': 0, 'comfort-ok': 1, 'comfort-good': 2 };
+  // ── Room grid — rooms with mold risk first ────────────────────────────────
   const sorted = [...roomData].sort((a, b) => {
-    const pa = a.mold ? -0.5 : priorityOrder[a.comfort.cls] ?? 2;
-    const pb = b.mold ? -0.5 : priorityOrder[b.comfort.cls] ?? 2;
-    return pa - pb;
+    const pa = a.mold ? 0 : 1;
+    const pb = b.mold ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    return a.sensor.localeCompare(b.sensor);
   });
 
   let latestTs = null;
   const grid = document.getElementById('liveRoomGrid');
   if (grid) {
-    grid.innerHTML = sorted.map(({ sensor, temp, humidity, comfort, mold, ts }) => {
+    grid.innerHTML = sorted.map(({ sensor, temp, humidity, mold, ts }) => {
       if (ts && (!latestTs || ts > latestTs)) latestTs = ts;
       const timeLabel = ts ? ts.replace('T', ' ').slice(0, 16) : 'No data';
-      const priorityCls = comfort.cls === 'comfort-bad' || mold
-        ? 'room-card-priority-bad'
-        : comfort.cls === 'comfort-ok' ? 'room-card-priority-warn' : '';
+      const priorityCls = mold ? 'room-card-priority-bad' : '';
       return `<div class="room-card ${priorityCls}">
         <div class="room-card-name">${sensor}</div>
         <div class="room-card-temp">${temp != null ? temp.toFixed(1) : '—'}<span class="room-card-unit">°C</span></div>
         <div class="room-card-humidity">💧 ${humidity != null ? humidity.toFixed(1) : '—'}%</div>
-        <span class="comfort-badge ${comfort.cls}">${comfort.emoji} ${comfort.label}</span>
         ${mold ? `<div class="mold-badge">${mold.emoji} ${mold.label}</div>` : ''}
         <div class="room-card-ts">🕐 ${timeLabel}</div>
       </div>`;
@@ -2719,6 +2935,9 @@ function renderLivePage() {
   // ── Device rows ──────────────────────────────────────────────────────────
   const devGrid = document.getElementById('liveDeviceGrid');
   if (devGrid && appData) {
+    const nowMs = Date.now();
+    const ACTIVE_WINDOW_MS = 1 * 60 * 60 * 1000;
+    const STANDBY_WINDOW_MS = 4 * 60 * 60 * 1000;
     devGrid.innerHTML = DEVICE_SHEETS.map(dev => {
       const rows   = appData[dev] || [];
       const latest = rows[rows.length - 1] || null;
@@ -2729,9 +2948,15 @@ function renderLivePage() {
       const color  = DEVICE_COLORS[dev].line;
 
       let badgeCls = 'device-badge-off', badgeLabel = '● Off';
-      if (power != null) {
-        if (power > 5)      { badgeCls = 'device-badge-active';  badgeLabel = '● Active'; }
-        else if (power > 0) { badgeCls = 'device-badge-standby'; badgeLabel = '◐ Standby'; }
+      if (timestamp) {
+        const ageMs = nowMs - new Date(timestamp).getTime();
+        if (ageMs <= ACTIVE_WINDOW_MS) {
+          badgeCls = 'device-badge-active';
+          badgeLabel = '● Active';
+        } else if (ageMs <= STANDBY_WINDOW_MS) {
+          badgeCls = 'device-badge-standby';
+          badgeLabel = '◐ Standby';
+        }
       }
 
       return `<div class="device-live-card-row" style="border-left-color:${color};">
@@ -2813,6 +3038,7 @@ async function refreshData() {
 // ==========================================================
 currentPage = getCurrentPage();
 if (!window.location.hash) window.location.hash = '#live';
+initTheme();
 applyPageLayout();
 buildUI();
 Promise.all([loadData(), loadSensorData()]).then(([energyData, sensors]) => {
